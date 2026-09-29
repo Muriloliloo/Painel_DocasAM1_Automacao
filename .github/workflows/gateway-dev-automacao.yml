@@ -1,9 +1,9 @@
-name: Gateway dev-automacao
+name: Gateway automacao
 
 on:
   push:
     branches:
-      - dev-automacao
+      - main
     paths:
       - "gateway/**"
       - ".github/workflows/gateway-dev-automacao.yml"
