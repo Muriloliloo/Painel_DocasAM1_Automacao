@@ -87,7 +87,12 @@ after(async () => {
 test("G1 /health responde 200", async () => {
   const { response, body } = await jsonRequest("/health");
   assert.equal(response.status, 200);
-  assert.deepEqual(body, { status: "ok", gatewayMode: "mock", authMode: "unconfigured" });
+  assert.equal(body.status, "ok");
+  assert.equal(body.gatewayMode, "mock");
+  assert.equal(body.authMode, "unconfigured");
+  assert.equal(body.ymsMode, "disabled");
+  assert.equal(body.sourceMode, "dispatch-customs");
+  assert.equal(typeof body.bigQueryIdentityConfigured, "boolean");
 });
 
 test("G2 /snapshot normal respeita o contrato", async () => {
@@ -269,7 +274,12 @@ test("A1 real com auth unconfigured falha fechado", async () => {
     const health = await fetch(`${url}/health`);
     const healthBody = await health.json();
     assert.equal(health.status, 200);
-    assert.deepEqual(healthBody, { status: "ok", gatewayMode: "real", authMode: "unconfigured" });
+    assert.equal(healthBody.status, "ok");
+    assert.equal(healthBody.gatewayMode, "real");
+    assert.equal(healthBody.authMode, "unconfigured");
+    assert.equal(healthBody.ymsMode, "disabled");
+    assert.equal(healthBody.sourceMode, "dispatch-customs");
+    assert.equal(typeof healthBody.bigQueryIdentityConfigured, "boolean");
 
     const ready = await fetch(`${url}/ready`);
     assert.equal(ready.status, 503);
@@ -517,7 +527,12 @@ test("A14 sanitizacao Aduana permanece por allowlist", () => {
 test("A15 modo mock permanece compativel com o frontend atual", async () => {
   const ready = await jsonRequest("/ready");
   assert.equal(ready.response.status, 200);
-  assert.deepEqual(ready.body, { ready: true, gatewayMode: "mock", authMode: "unconfigured" });
+  assert.equal(ready.body.ready, true);
+  assert.equal(ready.body.gatewayMode, "mock");
+  assert.equal(ready.body.authMode, "unconfigured");
+  assert.equal(ready.body.ymsMode, "disabled");
+  assert.equal(ready.body.sourceMode, "dispatch-customs");
+  assert.equal(typeof ready.body.bigQueryIdentityConfigured, "boolean");
 
   const { response, body } = await jsonRequest(`/snapshot?${query()}`);
   assert.equal(response.status, 200);
