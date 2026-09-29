@@ -33,6 +33,14 @@ function validatedSet(name, values, pattern, maxEntries = 20) {
   return new Set(normalized);
 }
 
+function validatedOptionalSet(name, values, pattern, maxEntries = 20) {
+  const normalized = Array.from(new Set(values));
+  if (normalized.length > maxEntries || normalized.some(value => !pattern.test(value))) {
+    throw new GatewayError(500, "INVALID_CONFIGURATION", `${name} possui valores invalidos.`);
+  }
+  return new Set(normalized);
+}
+
 function isSafeCloudMock(env, nodeEnv, mode) {
   void env;
   return nodeEnv === "production" && mode === "mock";
@@ -192,7 +200,7 @@ function createConfig(env = process.env, overrides = {}) {
       overrides.allowedSiteIds ?? csvValues(env.ALLOWED_SITE_IDS, "MLB"),
       /^[A-Za-z0-9_-]{1,16}$/
     ),
-    allowedGroupIds: validatedSet(
+    allowedGroupIds: validatedOptionalSet(
       "ALLOWED_GROUP_IDS",
       overrides.allowedGroupIds ?? (
         env.ALLOWED_GROUP_IDS
