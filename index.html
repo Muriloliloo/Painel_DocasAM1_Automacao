@@ -13457,7 +13457,9 @@ function assertAutomaticSourceSucceeded(metadata, sourceName) {
   const status = plainText(metadata?.sources?.[sourceName]);
   if (!status) return;
 
-  const successfulStatuses = new Set(["ok", "success", "successful", "complete", "completed", "sucesso", "concluido"]);
+  const successfulStatuses = new Set([
+    "ok", "success", "successful", "complete", "completed", "sucesso", "concluido", "derived_yms"
+  ]);
   if (!successfulStatuses.has(status)) {
     throw new Error(`O gateway informou falha na fonte ${sourceName}.`);
   }
