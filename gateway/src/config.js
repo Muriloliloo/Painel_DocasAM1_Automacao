@@ -33,11 +33,19 @@ function validatedSet(name, values, pattern, maxEntries = 20) {
   return new Set(normalized);
 }
 
-function configuredOrigins(env, overrides, nodeEnv) {
+function isSafeCloudMock(env, nodeEnv, mode) {
+  const isCloudRuntime = env.VERCEL === "1" || Boolean(env.VERCEL_ENV);
+  return nodeEnv === "production" && mode === "mock" && isCloudRuntime;
+}
+
+function configuredOrigins(env, overrides, nodeEnv, mode) {
+  const safeCloudMock = isSafeCloudMock(env, nodeEnv, mode);
   const values = overrides.allowedOrigins
     ?? (env.PANEL_ALLOWED_ORIGIN
       ? csvValues(env.PANEL_ALLOWED_ORIGIN, "")
-      : nodeEnv === "production" ? [] : ["http://localhost:8000"]);
+      : safeCloudMock
+        ? ["https://muriloliloo.github.io"]
+        : nodeEnv === "production" ? [] : ["http://localhost:8000"]);
 
   if (!values.length && nodeEnv === "production") {
     throw new GatewayError(
@@ -169,7 +177,7 @@ function createConfig(env = process.env, overrides = {}) {
       overrides.customsPath ?? env.CUSTOMS_PATH ?? DEFAULT_CUSTOMS_PATH,
       DEFAULT_CUSTOMS_PATH
     ),
-    allowedOrigins: configuredOrigins(env, overrides, nodeEnv),
+    allowedOrigins: configuredOrigins(env, overrides, nodeEnv, mode),
     allowedFacilityIds: validatedSet(
       "ALLOWED_FACILITY_IDS",
       overrides.allowedFacilityIds ?? csvValues(env.ALLOWED_FACILITY_IDS, "SSP15"),
@@ -185,7 +193,9 @@ function createConfig(env = process.env, overrides = {}) {
       overrides.allowedGroupIds ?? (
         env.ALLOWED_GROUP_IDS
           ? csvValues(env.ALLOWED_GROUP_IDS, "")
-          : nodeEnv === "production" ? [] : ["TESTE"]
+          : isSafeCloudMock(env, nodeEnv, mode)
+            ? ["TESTE"]
+            : nodeEnv === "production" ? [] : ["TESTE"]
       ),
       /^[A-Za-z0-9_-]{1,40}$/
     ),
@@ -226,5 +236,6 @@ module.exports = {
   createConfig,
   validatedUpstreamBaseUrl,
   validatedUpstreamPath,
-  validatedBindHost
+  validatedBindHost,
+  isSafeCloudMock
 };
