@@ -138,7 +138,11 @@ function createConfig(env = process.env, overrides = {}) {
     throw new GatewayError(500, "INVALID_CONFIGURATION", "AUTH_MODE deve ser unconfigured ou corporate.");
   }
 
-  const mockScenario = String(overrides.mockScenario ?? env.MOCK_SCENARIO ?? "normal").trim().toLowerCase();
+  const mockScenario = String(
+    overrides.mockScenario
+      ?? env.MOCK_SCENARIO
+      ?? (isSafeCloudMock(env, nodeEnv, mode) ? "empty-confirmed" : "normal")
+  ).trim().toLowerCase();
   const ymsMode = String(overrides.ymsMode ?? env.YMS_MODE ?? "disabled").trim().toLowerCase();
   if (!YMS_MODES.includes(ymsMode)) {
     throw new GatewayError(500, "INVALID_CONFIGURATION", "YMS_MODE deve ser disabled, mock ou provider.");
