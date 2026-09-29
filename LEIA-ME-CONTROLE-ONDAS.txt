@@ -1,0 +1,126 @@
+COMO USAR O CONTROLE DE ONDAS
+
+1. Abra o arquivo ondas.html no navegador.
+2. Clique em "Editar dados", no canto superior direito.
+3. Cole os dados da Extracao no campo "Extracao".
+4. Cole as rotas carregadas ou expedidas no campo "Base".
+5. Clique em "Aplicar".
+
+O painel salva as alteracoes no proprio navegador. Se atualizar a pagina, os dados continuam salvos.
+
+Para voltar ao exemplo inicial, clique em "Editar dados" e depois em "Exemplo".
+
+
+EXTRACAO
+
+A Extracao monta as rotas nas docas e ondas.
+
+Pode colar a tabela completa ou somente as informacoes principais:
+
+- Onda
+- Rota
+- Doca ou vaga
+- Transportadora
+
+Exemplo aceito:
+
+Onda 1    VP11_AM1    1    FLYPACK
+Onda 1    VP10_AM1    2    Flight Cargo
+Onda 1    VA11_AM1    3    HAWK TRANSPORTES LTDA
+
+Tambem aceita tabela completa com mais colunas. O painel ignora o que nao precisa.
+
+
+BASE
+
+A Base serve para informar quais rotas ja subiram o QR ou foram expedidas.
+
+Pode colar so a rota:
+
+VP11_AM1
+VP10_AM1
+VA11_AM1
+
+Ou pode colar a linha vinda do sistema com informacoes extras:
+
+VP11_AM1    Aduana em andamento    3 minutos    21 minutos    1
+VA11_AM1    Expedida    -    4 minutos    3
+
+O painel considera apenas:
+
+- Rota
+- Doca ou vaga
+- Onda
+- Transportadora
+- Expedida
+
+Todo o restante e ignorado.
+
+Se a mesma rota aparecer duplicada na Base, o cronometro nao reinicia.
+
+
+CORES DAS DOCAS
+
+- Vermelho: rota planejada, mas ainda nao carregada.
+- Verde: rota carregada na Base.
+- Laranja: rota carregada ha mais de 30 minutos.
+- Cinza: doca vazia.
+
+Se a rota ficar laranja, ela continua laranja mesmo se for expedida ou se a onda terminar.
+
+
+CRONOMETRO
+
+O cronometro comeca quando a rota aparece na Base.
+
+Ele trava quando:
+
+- a rota aparece como "Expedida";
+- o horario da onda termina.
+
+Se a rota aparecer mais de uma vez na Base, o cronometro continua do ponto em que estava.
+
+
+JUSTIFICATIVAS
+
+1. Clique na aba "Justificativas".
+2. Escolha um motivo em "Motivo em massa".
+3. Clique em "Selecionar rotas" para preencher somente as rotas pendentes sem justificativa.
+4. Clique em "Aplicar motivo".
+
+Se quiser remover motivos, marque as rotas na coluna "Limpar" e clique em "Limpar ticados".
+
+O botao "Selecionar rotas" nao seleciona tudo sempre. Ele seleciona somente as rotas pendentes que ainda estao sem justificativa.
+
+
+FECHAMENTO
+
+A aba "Fechamento" mostra automaticamente:
+
+- porcentagem da onda;
+- rotas pendentes;
+- transportadora;
+- motivos cadastrados;
+- resumo dos impactos por onda.
+
+
+PDF
+
+Clique em "PDF" para escolher:
+
+- quais ondas imprimir;
+- intervalo de docas;
+- relatorio de Docas;
+- relatorio de Justificativas;
+- relatorio de Fechamento.
+
+Tambem pode usar Ctrl+P no navegador.
+
+
+ARQUIVOS PRINCIPAIS
+
+- ondas.html: arquivo principal para abrir o painel.
+- ondas-dados.js: dados iniciais do exemplo.
+- assets: pasta com logos da DHL e Mercado Livre.
+- controle-ondas-whatsapp.zip: pacote pronto para enviar.
+
