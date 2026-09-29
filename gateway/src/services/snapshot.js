@@ -7,6 +7,10 @@ const { sanitizeDispatch } = require("../sanitizers/dispatch");
 const { sanitizeCustoms } = require("../sanitizers/customs");
 const { sanitizeYms } = require("../sanitizers/yms");
 const { buildSourceComparison } = require("./source-comparison");
+const {
+  ymsToOperationalRows,
+  ymsToCustomsRows
+} = require("./yms-operational-bridge");
 const { GatewayError } = require("../errors");
 
 async function withinTimeout(config, operation) {
@@ -47,6 +51,21 @@ async function acquireSources({
   dependencies = {}
 }) {
   return withinTimeout(config, signal => {
+    if (config.snapshotSourceMode === "yms-primary") {
+      return Promise.allSettled([
+        fetchYms({
+          config,
+          scenario,
+          waves,
+          facilityId,
+          cycle,
+          timezone,
+          signal,
+          ...dependencies
+        })
+      ]).then(results => ({ names: ["yms"], results }));
+    }
+
     const names = ["dispatch", "aduana"];
     const tasks = [
       fetchDispatch({
@@ -109,10 +128,31 @@ async function buildSnapshot(options) {
     );
   }
 
-  const operacional = byName.dispatch.value.map(sanitizeDispatch);
-  const aduana = byName.aduana.value.map(sanitizeCustoms);
   const ymsEnabled = names.includes("yms");
   const yms = ymsEnabled ? byName.yms.value.map(sanitizeYms) : [];
+
+  if (config.snapshotSourceMode === "yms-primary") {
+    const operacional = ymsToOperationalRows(yms);
+    const aduana = ymsToCustomsRows(yms);
+
+    return {
+      snapshotComplete: true,
+      emptyConfirmed: yms.length === 0,
+      sourceMode: "yms-primary",
+      sources: {
+        dispatch: "derived_yms",
+        aduana: "derived_yms",
+        yms: "ok"
+      },
+      operacional,
+      aduana,
+      yms,
+      comparison: buildSourceComparison({ operacional, aduana, yms })
+    };
+  }
+
+  const operacional = byName.dispatch.value.map(sanitizeDispatch);
+  const aduana = byName.aduana.value.map(sanitizeCustoms);
 
   const allActiveSourcesEmpty = operacional.length === 0
     && aduana.length === 0
@@ -121,6 +161,7 @@ async function buildSnapshot(options) {
   const payload = {
     snapshotComplete: true,
     emptyConfirmed: scenario === "empty-confirmed" && allActiveSourcesEmpty,
+    sourceMode: "dispatch-customs",
     sources: {
       dispatch: "ok",
       aduana: "ok"
