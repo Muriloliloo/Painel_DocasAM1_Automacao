@@ -13414,7 +13414,12 @@ function automaticSnapshotMetadata(payload = {}) {
     value.sources && typeof value.sources === "object" && !Array.isArray(value.sources)
   );
 
+  const modeContainer = containers.find(value =>
+    Object.prototype.hasOwnProperty.call(value, "gatewayMode")
+  );
+
   return {
+    gatewayMode: normalize(modeContainer?.gatewayMode),
     snapshotComplete: booleanFlag("snapshotComplete"),
     emptyConfirmed: booleanFlag("emptyConfirmed"),
     sources: sourceContainer
@@ -13425,6 +13430,15 @@ function automaticSnapshotMetadata(payload = {}) {
         }
       : {}
   };
+}
+
+function assertAutomaticGatewayMode(metadata, config) {
+  if (config?.homologation === true) return;
+
+  const gatewayMode = plainText(metadata?.gatewayMode);
+  if (gatewayMode !== "real") {
+    throw new Error("Gateway real nao confirmado. O painel bloqueou a atualizacao para evitar usar dados de homologacao como operacao real.");
+  }
 }
 
 function assertAutomaticSourceSucceeded(metadata, sourceName) {
@@ -13496,6 +13510,7 @@ async function fetchYmsSnapshotResult(config, requestContext) {
   });
   const payload = await fetchAutomaticJson(url, resolved, requestContext);
   const metadata = automaticSnapshotMetadata(payload);
+  assertAutomaticGatewayMode(metadata, resolved);
   assertAutomaticSourceSucceeded(metadata, "yms");
 
   return {
@@ -13526,6 +13541,7 @@ async function fetchDispatchSnapshotResult(config, requestContext) {
     });
     const payload = await fetchAutomaticJson(url, resolved, requestContext);
     const metadata = automaticSnapshotMetadata(payload);
+    assertAutomaticGatewayMode(metadata, resolved);
     assertAutomaticSourceSucceeded(metadata, "dispatch");
     return {
       rows: automaticRowsFromResponse(payload, ["operacional", "dispatch", "routes"], "do Dispatch")
@@ -13552,6 +13568,7 @@ async function fetchCustomsSnapshotResult(config, requestContext) {
   const url = automaticGatewayUrl(resolved, resolved.customsPath, automaticCommonQuery(resolved));
   const payload = await fetchAutomaticJson(url, resolved, requestContext);
   const metadata = automaticSnapshotMetadata(payload);
+  assertAutomaticGatewayMode(metadata, resolved);
   assertAutomaticSourceSucceeded(metadata, "aduana");
   return {
     rows: automaticRowsFromResponse(payload, ["aduana", "customs", "audits"], "da Aduana")
@@ -13606,6 +13623,7 @@ async function fetchAutomaticSnapshot(config, requestContext) {
   });
   const payload = await fetchAutomaticJson(url, resolved, requestContext);
   const metadata = automaticSnapshotMetadata(payload);
+  assertAutomaticGatewayMode(metadata, resolved);
   assertAutomaticSourceSucceeded(metadata, "dispatch");
   assertAutomaticSourceSucceeded(metadata, "aduana");
   if (resolved.ymsEnabled) assertAutomaticSourceSucceeded(metadata, "yms");
