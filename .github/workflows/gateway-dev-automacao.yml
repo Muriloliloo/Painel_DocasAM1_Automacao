@@ -38,6 +38,9 @@ jobs:
       - name: Verify
         run: npm run verify
 
+      - name: Validate GCP provisioning script
+        run: bash -n scripts/provision-gcp-vercel-wif.sh
+
       - name: Docker build
         run: docker build -t painel-docas-gateway:test .
 
