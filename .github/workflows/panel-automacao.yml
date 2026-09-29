@@ -1,0 +1,40 @@
+name: Painel automacao
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "index.html"
+      - "automation-config.js"
+      - "app.js"
+      - "closure-status.js"
+      - "scripts/verify-panel.js"
+      - ".github/workflows/pages.yml"
+      - ".github/workflows/panel-automacao.yml"
+  pull_request:
+    paths:
+      - "index.html"
+      - "automation-config.js"
+      - "app.js"
+      - "closure-status.js"
+      - "scripts/verify-panel.js"
+
+permissions:
+  contents: read
+
+jobs:
+  verify-panel:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - name: Verifica frontend
+        run: node scripts/verify-panel.js
