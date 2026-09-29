@@ -6,17 +6,17 @@
   window.PAINEL_RUNTIME_MODE = "automation";
   window.PAINEL_AUTOMATION_STANDALONE = true;
 
-  // HOMOLOGACAO TEMPORARIA:
-  // usa um snapshot vazio confirmado publicado no proprio GitHub Pages.
+  // HOMOLOGACAO CLOUD:
+  // usa o gateway HTTPS publicado na Vercel em modo mock vazio confirmado.
   // Nenhuma rota ficticia e inserida na operacao.
-  // Quando o gateway HTTPS real estiver disponivel, trocar somente gatewayBaseUrl
-  // e snapshotPath para o endpoint oficial.
-  const gatewayBaseUrl = "https://muriloliloo.github.io/Painel_DocasAM1_Automacao/mock-gateway";
+  // A mudanca para dados reais deve ocorrer somente quando a autenticacao
+  // corporativa do backend estiver aprovada e validada.
+  const gatewayBaseUrl = "https://painel-docas-am1-gateway.vercel.app";
 
   window.PAINEL_AUTOMATION_CONFIG = Object.freeze({
     gatewayBaseUrl,
     mode: "combined",
-    snapshotPath: "snapshot.json",
+    snapshotPath: "snapshot",
     dispatchPath: "dispatch",
     customsPath: "customs",
     ymsPath: "yms",
