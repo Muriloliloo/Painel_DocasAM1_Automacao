@@ -1,4 +1,4 @@
-# Gateway intermediario do Painel_DocasAM1
+# Gateway intermediario do Painel_DocasAM1_Automacao
 
 Gateway HTTP somente leitura que separa o painel publico dos sistemas internos. O modo mock usa somente dados ficticios; o modo real permanece fechado ate a TI implementar o provider corporativo oficial.
 
@@ -140,7 +140,7 @@ Nenhum token, cookie, senha, Authorization, CSRF, certificado ou segredo pode se
 
 ## Frontend com YMS em modo opt-in
 
-O frontend da branch `dev-automacao` ja consegue receber o array `yms` do gateway, mas ainda nao usa esses dados para sobrescrever status ou doca da visao consolidada.
+O frontend da branch `main` ja consegue receber o array `yms` do gateway, mas ainda nao usa esses dados para sobrescrever status ou doca da visao consolidada.
 
 Isso e intencional enquanto a autoridade da doca real ainda nao estiver fechada no BigQuery.
 
