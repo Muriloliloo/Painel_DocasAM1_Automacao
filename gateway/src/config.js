@@ -34,8 +34,8 @@ function validatedSet(name, values, pattern, maxEntries = 20) {
 }
 
 function isSafeCloudMock(env, nodeEnv, mode) {
-  const isCloudRuntime = env.VERCEL === "1" || Boolean(env.VERCEL_ENV);
-  return nodeEnv === "production" && mode === "mock" && isCloudRuntime;
+  void env;
+  return nodeEnv === "production" && mode === "mock";
 }
 
 function configuredOrigins(env, overrides, nodeEnv, mode) {
