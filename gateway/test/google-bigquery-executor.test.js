@@ -76,6 +76,35 @@ test("executor BigQuery usa query parametrizada e identidade do runtime", async 
   });
 });
 
+
+test("executor BigQuery injeta authClient federado quando fornecido", async () => {
+  const clients = [];
+  const authClient = { kind: "federated" };
+
+  class FakeBigQuery {
+    constructor(options) {
+      clients.push(options);
+    }
+
+    async query() {
+      return [[]];
+    }
+  }
+
+  const execute = createGoogleBigQueryExecutor({
+    BigQueryClass: FakeBigQuery,
+    projectId: "meli-bi-data",
+    location: "US",
+    authClientFactory: async () => authClient
+  });
+
+  await execute({ sql: "SELECT 1", params: {} });
+
+  assert.equal(clients.length, 1);
+  assert.equal(clients[0].projectId, "meli-bi-data");
+  assert.equal(clients[0].authClient, authClient);
+});
+
 test("executor BigQuery converte falha do SDK em erro seguro", async () => {
   class FailingBigQuery {
     async query() {
