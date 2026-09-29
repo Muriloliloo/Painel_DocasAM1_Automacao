@@ -37,7 +37,7 @@ test("OIDC parcial falha fechado", async () => {
   );
 });
 
-test("OIDC completo monta external account sem segredo permanente", async () => {
+test("OIDC completo monta IdentityPoolClient sem segredo permanente", async () => {
   const supplied = [];
   const configs = [];
   const fakeClient = { kind: "external-account" };
@@ -51,8 +51,8 @@ test("OIDC completo monta external account sem segredo permanente", async () => 
       }
     }),
     googleAuthLoader: async () => ({
-      ExternalAccountClient: {
-        fromJSON(config) {
+      IdentityPoolClient: class {
+        constructor(config) {
           configs.push(config);
           return fakeClient;
         }
