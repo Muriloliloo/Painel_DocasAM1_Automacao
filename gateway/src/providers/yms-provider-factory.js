@@ -14,7 +14,8 @@ function createConfiguredYmsProvider(config, { queryExecutor } = {}) {
   }
 
   return createBigQueryYmsProvider({
-    queryExecutor
+    queryExecutor,
+    queryCacheMs: config.ymsQueryCacheMs
   });
 }
 
