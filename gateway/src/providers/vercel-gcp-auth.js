@@ -42,13 +42,13 @@ async function createVercelGcpAuthClient({
   if (!config.configured) return null;
 
   let getVercelOidcToken;
-  let ExternalAccountClient;
+  let IdentityPoolClient;
 
   try {
     const oidc = oidcLoader ? await oidcLoader() : await import("@vercel/oidc");
     const google = googleAuthLoader ? await googleAuthLoader() : require("google-auth-library");
     getVercelOidcToken = oidc.getVercelOidcToken;
-    ExternalAccountClient = google.ExternalAccountClient;
+    IdentityPoolClient = google.IdentityPoolClient;
   } catch {
     throw new GatewayError(
       503,
@@ -57,7 +57,7 @@ async function createVercelGcpAuthClient({
     );
   }
 
-  if (typeof getVercelOidcToken !== "function" || !ExternalAccountClient?.fromJSON) {
+  if (typeof getVercelOidcToken !== "function" || typeof IdentityPoolClient !== "function") {
     throw new GatewayError(
       503,
       "GCP_OIDC_CLIENT_INVALID",
@@ -66,13 +66,14 @@ async function createVercelGcpAuthClient({
   }
 
   const audience = oidcAudience(config);
-  const authClient = ExternalAccountClient.fromJSON({
+  const authClient = new IdentityPoolClient({
     type: "external_account",
     audience,
     subject_token_type: "urn:ietf:params:oauth:token-type:jwt",
     token_url: "https://sts.googleapis.com/v1/token",
     service_account_impersonation_url:
       `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${config.GCP_SERVICE_ACCOUNT_EMAIL}:generateAccessToken`,
+    scopes: ["https://www.googleapis.com/auth/cloud-platform"],
     subject_token_supplier: {
       getSubjectToken: () => getVercelOidcToken()
     }
