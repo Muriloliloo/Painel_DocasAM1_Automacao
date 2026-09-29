@@ -22,6 +22,7 @@
     };
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="./html2canvas.min.js" defer></script>
   <script src="./automation-config.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
   <style>
@@ -3582,6 +3583,1806 @@
       font: 950 13px "Segoe UI", Arial, sans-serif;
       text-transform: uppercase;
     }
+    /* Fechamento executivo: ocupa a área disponível; JPEG mantém o formato de exportação. */
+    #fechamentoExecutivoView {
+      box-sizing: border-box;
+      padding: 10px 12px;
+      background: #dfeaf3;
+      overflow: auto;
+    }
+
+    .executive-board {
+      --executive-navy: #073455;
+      --executive-ink: #001f3d;
+      --executive-red: #ef3340;
+      --executive-green: #11a858;
+      width: 100%;
+      min-width: 0;
+      height: 100%;
+      min-height: 640px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: 9% 25% 35% 31%;
+      overflow: hidden;
+      border: 1px solid #a9bdce;
+      border-radius: 8px;
+      background: #f8fbfe;
+      color: var(--executive-ink);
+      box-shadow: 0 12px 30px rgba(2, 35, 63, .14);
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    .executive-board * { box-sizing: border-box; }
+
+    .executive-board.executive-exporting {
+      width: 2200px !important;
+      min-width: 2200px !important;
+      height: 1650px !important;
+      aspect-ratio: 4 / 3 !important;
+      grid-template-rows: 120px 285px 605px 640px !important;
+      zoom: 1 !important;
+      transform: none !important;
+    }
+
+    .executive-board.executive-exporting .executive-panel {
+      grid-template-rows: 58px minmax(0, 1fr);
+    }
+
+    .executive-board.executive-exporting .executive-panel-title {
+      padding: 0 18px;
+      font-size: 22px;
+      line-height: 1.08;
+      letter-spacing: .01em;
+    }
+
+    .executive-board.executive-exporting .executive-wave-table {
+      font-size: 18px;
+      line-height: 1.22;
+    }
+
+    .executive-board.executive-exporting .executive-wave-table th,
+    .executive-board.executive-exporting .executive-wave-table td {
+      padding: 8px 10px;
+      line-height: 1.22;
+    }
+
+    .executive-board.executive-exporting .executive-offender-table,
+    .executive-board.executive-exporting .executive-offender-table.dense {
+      font-size: 17px;
+      line-height: 1.24;
+    }
+
+    .executive-board.executive-exporting .executive-offender-table th,
+    .executive-board.executive-exporting .executive-offender-table td,
+    .executive-board.executive-exporting .executive-offender-table.dense th,
+    .executive-board.executive-exporting .executive-offender-table.dense td {
+      padding: 6px 10px;
+      line-height: 1.24;
+    }
+
+    .executive-board.executive-exporting .executive-insights {
+      gap: 12px;
+      padding: 14px 16px;
+    }
+
+    .executive-board.executive-exporting .executive-insight {
+      grid-template-columns: 40px minmax(0, 1fr);
+      gap: 14px;
+      padding: 10px 14px;
+    }
+
+    .executive-board.executive-exporting .executive-insight-number {
+      width: 34px;
+      height: 34px;
+      font-size: 18px;
+    }
+
+    .executive-board.executive-exporting .executive-insight strong {
+      font-size: 18px;
+      line-height: 1.18;
+    }
+
+    .executive-board.executive-exporting .executive-insight small {
+      margin-top: 6px;
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .executive-board.executive-exporting .executive-kpi span {
+      font-size: 16px;
+    }
+
+    .executive-board.executive-exporting .executive-kpi strong {
+      font-size: 52px;
+    }
+
+    .executive-board.executive-exporting .executive-callout {
+      font-size: 31px;
+      line-height: 1.08;
+    }
+
+    .executive-board.executive-exporting .executive-heading strong {
+      font-size: 38px;
+    }
+
+    .executive-board.executive-exporting .executive-heading small {
+      font-size: 13px;
+    }
+
+    .executive-board.executive-exporting .executive-status strong {
+      font-size: 17px;
+    }
+
+    .executive-board.executive-exporting .executive-status small {
+      font-size: 13px;
+    }
+
+    /* Exportacao: topo mais compacto para priorizar os cards operacionais. */
+    .executive-board.executive-exporting .executive-hero {
+      grid-template-columns: 30% minmax(0, 1fr);
+      gap: 14px;
+      padding: 10px 12px;
+    }
+
+    .executive-board.executive-exporting .executive-score-card.executive-score-modern {
+      grid-template-columns: minmax(0, 1fr) 124px;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 11px;
+    }
+
+    .executive-board.executive-exporting .executive-score-main {
+      gap: 5px;
+      padding-left: 5px;
+    }
+
+    .executive-board.executive-exporting .executive-score-label > span {
+      font-size: 11px;
+    }
+
+    .executive-board.executive-exporting .executive-score-label > b {
+      min-height: 20px;
+      padding: 0 8px;
+      font-size: 9px;
+    }
+
+    .executive-board.executive-exporting .executive-score-value {
+      font-size: 48px;
+      line-height: .9;
+    }
+
+    .executive-board.executive-exporting .executive-score-progress {
+      height: 11px;
+    }
+
+    .executive-board.executive-exporting .executive-score-target-marker {
+      top: -5px;
+      height: 21px;
+    }
+
+    .executive-board.executive-exporting .executive-score-scale {
+      font-size: 8px;
+    }
+
+    .executive-board.executive-exporting .executive-score-side {
+      gap: 6px;
+    }
+
+    .executive-board.executive-exporting .executive-score-mini {
+      padding: 6px 8px;
+      border-radius: 8px;
+    }
+
+    .executive-board.executive-exporting .executive-score-mini span {
+      font-size: 8px;
+    }
+
+    .executive-board.executive-exporting .executive-score-mini strong {
+      margin-top: 3px;
+      font-size: 21px;
+    }
+
+    .executive-board.executive-exporting .executive-score-mini small {
+      margin-top: 2px;
+      font-size: 7px;
+    }
+
+    .executive-board.executive-exporting .executive-hero-copy {
+      gap: 10px;
+      padding: 7px 10px 4px 2px;
+    }
+
+    .executive-board.executive-exporting .executive-callout {
+      font-size: 27px;
+      line-height: 1.02;
+    }
+
+    .executive-board.executive-exporting .executive-kpis {
+      gap: 10px;
+    }
+
+    .executive-board.executive-exporting .executive-kpi {
+      gap: 8px;
+      padding: 7px 11px;
+    }
+
+    .executive-board.executive-exporting .executive-kpi span {
+      font-size: 14px;
+    }
+
+    .executive-board.executive-exporting .executive-kpi strong {
+      margin-top: 2px;
+      font-size: 43px;
+      line-height: .9;
+    }
+
+    .executive-topbar {
+      display: grid;
+      grid-template-columns: minmax(390px, 1fr) auto auto;
+      align-items: center;
+      gap: 22px;
+      padding: 0 22px;
+      background: linear-gradient(135deg, #0a456e 0%, #062b49 75%, #041e34 100%);
+      color: #fff;
+    }
+
+    .executive-heading {
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr);
+      column-gap: 12px;
+      align-items: center;
+    }
+
+    .executive-heading > i {
+      grid-row: 1 / 3;
+      font-size: 36px;
+      color: #fff;
+    }
+
+    .executive-heading strong {
+      font: 950 clamp(20px, 1.55vw, 34px)/1 "Arial Black", "Segoe UI Black", "Segoe UI", sans-serif;
+      letter-spacing: -.02em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .executive-heading small {
+      color: #72c9f0;
+      font: 800 clamp(9px, .57vw, 13px)/1.15 "Segoe UI", Arial, sans-serif;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .executive-status {
+      min-width: 260px;
+      min-height: 48px;
+      display: grid;
+      grid-template-columns: 32px auto;
+      grid-template-rows: auto auto;
+      align-items: center;
+      column-gap: 10px;
+      padding: 8px 20px;
+      border-radius: 999px;
+      background: #fff6f7;
+      color: var(--executive-red);
+      box-shadow: inset 0 0 0 1px rgba(239, 51, 64, .18);
+    }
+
+    .executive-status::before {
+      content: "";
+      grid-row: 1 / 3;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .executive-status strong {
+      font: 950 15px/1 "Segoe UI", Arial, sans-serif;
+      text-transform: uppercase;
+    }
+
+    .executive-status small {
+      color: var(--executive-ink);
+      font: 900 11px/1.1 "Segoe UI", Arial, sans-serif;
+    }
+
+    .executive-status.on-target {
+      background: #effcf4;
+      color: var(--executive-green);
+      box-shadow: inset 0 0 0 1px rgba(17, 168, 88, .2);
+    }
+
+    .executive-share {
+      min-width: 210px;
+      height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border: 0;
+      border-radius: 11px;
+      background: linear-gradient(180deg, #ffdb47, #ffc51a);
+      color: #03294a;
+      box-shadow: inset 0 -3px 0 rgba(151, 103, 0, .2), 0 4px 12px rgba(0, 0, 0, .18);
+      font: 950 16px/1 "Segoe UI", Arial, sans-serif;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .executive-share:hover { filter: brightness(1.04); transform: translateY(-1px); }
+    .executive-share:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+    .executive-share i { font-size: 20px; }
+    .executive-share:disabled { cursor: wait; filter: saturate(.7); transform: none; }
+
+    .executive-hero {
+      display: grid;
+      grid-template-columns: 34% minmax(0, 1fr);
+      gap: 18px;
+      padding: 12px;
+      border-bottom: 1px solid #c7d7e4;
+      background: #fff;
+    }
+
+    .executive-score-card {
+      display: grid;
+      grid-template-columns: minmax(210px, 1fr) minmax(190px, .85fr);
+      align-items: center;
+      min-width: 0;
+      border-right: 1px solid #c7d7e4;
+      padding-right: 18px;
+    }
+
+    .executive-ring {
+      --ring-angle: 0deg;
+      --ring-color: var(--executive-red);
+      width: clamp(145px, 12vw, 225px);
+      aspect-ratio: 1;
+      margin: auto;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .executive-ring canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .executive-ring-copy {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .executive-ring-copy strong {
+      font: 950 clamp(40px, 4.1vw, 72px)/.9 "Arial Black", "Segoe UI Black", "Segoe UI", sans-serif;
+      letter-spacing: -.06em;
+    }
+
+    .executive-ring-copy span {
+      margin-top: 8px;
+      font: 950 clamp(17px, 1.35vw, 26px)/1 "Segoe UI", Arial, sans-serif;
+      text-transform: uppercase;
+    }
+
+    .executive-target {
+      display: grid;
+      gap: 14px;
+      align-content: center;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .executive-target-label {
+      display: grid;
+      grid-template-columns: 34px auto;
+      align-items: center;
+      column-gap: 8px;
+      text-align: left;
+    }
+
+    .executive-target-label i { grid-row: 1 / 3; font-size: 30px; color: #0a4a77; }
+    .executive-target-label span { font: 950 14px/1 "Segoe UI", Arial, sans-serif; text-transform: uppercase; }
+    .executive-target-label strong { font: 950 clamp(32px, 2.5vw, 48px)/1 "Arial Black", "Segoe UI Black", sans-serif; }
+
+    .executive-gap {
+      min-width: 176px;
+      padding: 9px 14px;
+      border-radius: 7px;
+      background: #ffe9eb;
+      color: var(--executive-red);
+      font: 950 clamp(18px, 1.55vw, 29px)/1 "Segoe UI", Arial, sans-serif;
+    }
+
+    .executive-gap small {
+      display: block;
+      margin-top: 5px;
+      color: var(--executive-ink);
+      font: 900 9px/1 "Segoe UI", Arial, sans-serif;
+      text-transform: uppercase;
+    }
+
+    .executive-hero-copy {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+      align-content: center;
+      padding: 10px 12px 4px 4px;
+    }
+
+    .executive-callout {
+      margin: 0;
+      font: 950 clamp(18px, 1.48vw, 30px)/1.05 "Arial Black", "Segoe UI Black", "Segoe UI", sans-serif;
+      letter-spacing: -.035em;
+    }
+
+    .executive-callout em { color: var(--executive-red); font-style: normal; }
+
+    .executive-kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .executive-kpi {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 62px minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: #eaf6ff;
+    }
+
+    .executive-kpi.loaded { background: #e8faef; }
+    .executive-kpi.loss { background: #ffebed; }
+
+    .executive-kpi-icon {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #cfeaff;
+      color: #073c65;
+      font-size: 29px;
+    }
+
+    .executive-kpi.loaded .executive-kpi-icon { background: #c7f1d8; }
+    .executive-kpi.loss .executive-kpi-icon { background: #ffcfd3; color: var(--executive-red); }
+    .executive-kpi span { font: 950 12px/1 "Segoe UI", Arial, sans-serif; text-transform: uppercase; }
+    .executive-kpi strong { display: block; margin-top: 4px; font: 950 clamp(30px, 2.45vw, 48px)/.9 "Arial Black", "Segoe UI Black", sans-serif; }
+
+    .executive-main-grid,
+    .executive-bottom-grid {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 12px 10px;
+      background: #f8fbfe;
+    }
+
+    .executive-main-grid { padding-top: 10px; }
+
+    .executive-panel {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: 42px minmax(0, 1fr);
+      overflow: hidden;
+      border: 1px solid #b8cad8;
+      border-radius: 7px;
+      background: #fff;
+    }
+
+    .executive-panel-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      background: linear-gradient(180deg, #0a4a78, #073455);
+      color: #fff;
+      font: 950 clamp(16px, 1vw, 21px)/1 "Segoe UI", Arial, sans-serif;
+      text-transform: uppercase;
+    }
+
+    .executive-panel-title i { font-size: 19px; }
+
+    .executive-wave-table,
+    .executive-offender-table {
+      width: 100%;
+      height: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      color: #001f3d;
+      font: 950 clamp(11px, .72vw, 15px)/1.04 "Segoe UI", Arial, sans-serif;
+    }
+
+    .executive-wave-table th,
+    .executive-wave-table td,
+    .executive-offender-table th,
+    .executive-offender-table td {
+      padding: 3px 8px;
+      border: 1px solid #b7ccdc;
+      text-align: center;
+    }
+
+    .executive-wave-table th,
+    .executive-offender-table th {
+      background: #e4f1fb;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .executive-wave-table td:first-child,
+    .executive-offender-table td:first-child { text-align: left; font-weight: 950; }
+    .executive-wave-table tbody tr:nth-child(even),
+    .executive-offender-table tbody tr:nth-child(even) { background: #f1f7fb; }
+    .executive-wave-table tfoot td,
+    .executive-offender-table tfoot td { background: #eaf4fb; font-weight: 950; font-size: 1.12em; }
+    .executive-rate.bad { color: var(--executive-red); }
+    .executive-rate.good { color: #009543; }
+
+    .executive-chart-layout {
+      min-height: 0;
+      height: 100%;
+      padding: 4px 8px 6px;
+    }
+
+    .executive-donut-wrap {
+      position: relative;
+      min-height: 0;
+      height: 100%;
+      display: grid;
+      place-items: center;
+    }
+
+    .executive-donut-wrap canvas {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .executive-chart-legend {
+      display: grid;
+      gap: 7px;
+      align-content: center;
+    }
+
+    .executive-chart-legend-item {
+      display: grid;
+      grid-template-columns: 10px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      font: 850 clamp(9px, .58vw, 12px)/1.12 "Segoe UI", Arial, sans-serif;
+      text-transform: uppercase;
+    }
+
+    .executive-chart-legend-item i { width: 10px; height: 10px; border-radius: 50%; }
+    .executive-chart-legend-item strong { font-size: 1.1em; }
+    .executive-chart-legend-item small { grid-column: 2 / 4; color: #536e83; font-weight: 850; }
+
+    .executive-offender-table {
+      font-size: clamp(10px, .64vw, 13px);
+      line-height: 1.18;
+    }
+
+    .executive-offender-table th,
+    .executive-offender-table td {
+      padding: 2px 7px;
+      vertical-align: middle;
+      line-height: 1.18;
+    }
+
+    .executive-offender-table th {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .executive-offender-table td:first-child {
+      width: 60%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .executive-offender-reason {
+      display: grid;
+      grid-template-columns: 10px minmax(0, 1fr);
+      align-items: start;
+      gap: 7px;
+      line-height: 1.18;
+    }
+
+    .executive-offender-reason i {
+      width: 10px;
+      height: 10px;
+      margin-top: .12em;
+      border-radius: 50%;
+    }
+
+    .executive-offender-table.dense {
+      font-size: clamp(9px, .56vw, 11.5px);
+      line-height: 1.14;
+    }
+
+    .executive-offender-table.dense th,
+    .executive-offender-table.dense td {
+      padding: 1px 6px;
+      line-height: 1.14;
+    }
+
+    .executive-insights {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      padding: 8px 12px;
+    }
+
+    .executive-insight {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 32px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      padding: 5px 10px;
+      border: 1px solid #d3e0ea;
+      border-radius: 7px;
+      background: #f2f8fc;
+    }
+
+    .executive-insight-number {
+      width: 27px;
+      height: 27px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--executive-red);
+      color: #fff;
+      font: 950 15px/1 "Segoe UI", Arial, sans-serif;
+    }
+
+    .executive-insight:nth-child(2) .executive-insight-number { background: #ffd22e; color: #001b35; }
+    .executive-insight:nth-child(3) .executive-insight-number { background: var(--executive-green); }
+    .executive-insight strong { display: block; font: 950 clamp(12px, .78vw, 16px)/1.07 "Segoe UI", Arial, sans-serif; }
+    .executive-insight small { display: block; margin-top: 3px; color: #344f64; font: 900 clamp(10px, .62vw, 13px)/1.1 "Segoe UI", Arial, sans-serif; }
+
+    .executive-owners {
+      display: grid;
+      grid-template-columns: auto repeat(3, minmax(100px, 1fr));
+      align-items: center;
+      gap: 8px;
+      padding: 3px 2px 0;
+      font: 950 11px/1 "Segoe UI", Arial, sans-serif;
+      text-transform: uppercase;
+    }
+
+    .executive-owner {
+      min-height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: #0d88d5;
+      color: #fff;
+    }
+
+    .executive-owner:nth-child(3) { background: #ffd22e; color: #001b35; }
+    .executive-owner:nth-child(4) { background: #0b5a91; }
+
+    body.dark-mode .executive-board { background: #0b1f2d; border-color: #48687d; }
+    body.dark-mode .executive-hero,
+    body.dark-mode .executive-panel { background: #102b3b; color: #f6fbff; }
+    body.dark-mode .executive-main-grid,
+    body.dark-mode .executive-bottom-grid { background: #0b1f2d; }
+    body.dark-mode .executive-score-card { border-color: #48687d; }
+    body.dark-mode .executive-wave-table tbody tr:nth-child(even),
+    body.dark-mode .executive-offender-table tbody tr:nth-child(even),
+    body.dark-mode .executive-insight { background: #173748; }
+    body.dark-mode .executive-wave-table th,
+    body.dark-mode .executive-offender-table th,
+    body.dark-mode .executive-wave-table tfoot td,
+    body.dark-mode .executive-offender-table tfoot td { background: #1e465c; color: #fff; }
+    body.dark-mode .executive-wave-table :is(th, td),
+    body.dark-mode .executive-offender-table :is(th, td),
+    body.dark-mode .executive-insight { border-color: #48687d; }
+    body.dark-mode .executive-insight small,
+    body.dark-mode .executive-chart-legend-item small { color: #b9cbd8; }
+
+    @media (max-width: 1300px) {
+      .executive-board {
+        width: 1180px;
+        min-width: 1180px;
+        height: auto;
+        min-height: 0;
+        aspect-ratio: 16 / 9;
+        zoom: .8;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .executive-board { zoom: .68; }
+    }
+
+    @media (max-width: 760px) {
+      .executive-board { zoom: .52; }
+    }
+
+    @media (max-width: 1280px) {
+      #fechamentoExecutivoView { padding: 8px; }
+      .executive-board { margin: 0; }
+    }
+    /* Fechamento Executivo: topo mais compacto e contraste reforçado para PNG/WhatsApp. */
+    .executive-board {
+      --executive-ink: #00162b;
+      --executive-red: #e51f32;
+      --executive-green: #078f46;
+    }
+
+    .executive-hero,
+    .executive-panel,
+    .executive-wave-table,
+    .executive-offender-table,
+    .executive-insight {
+      color: #00162b;
+    }
+
+    .executive-ring-copy strong {
+      color: #00162b;
+      font-size: clamp(36px, 3.55vw, 64px);
+      letter-spacing: -.055em;
+    }
+
+    .executive-ring-copy span {
+      color: #00162b;
+      font-size: clamp(15px, 1.12vw, 22px);
+      font-weight: 950;
+    }
+
+    .executive-target-label span {
+      color: #00162b;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .executive-target-label strong {
+      color: #00162b;
+      font-size: clamp(28px, 2.15vw, 42px);
+    }
+
+    .executive-target-label i {
+      color: #063f6c;
+    }
+
+    .executive-gap {
+      min-width: 156px;
+      padding: 8px 12px;
+      color: #e51f32;
+      font-size: clamp(16px, 1.3vw, 25px);
+    }
+
+    .executive-gap small {
+      color: #00162b;
+      font-size: 8px;
+      font-weight: 950;
+    }
+
+    .executive-hero-copy {
+      gap: 11px;
+      padding-top: 7px;
+    }
+
+    .executive-callout {
+      color: #00162b;
+      font-size: clamp(15px, 1.2vw, 24px);
+      line-height: 1.04;
+      letter-spacing: -.025em;
+    }
+
+    .executive-callout em {
+      color: #e51f32;
+    }
+
+    .executive-kpi {
+      grid-template-columns: 54px minmax(0, 1fr);
+      gap: 10px;
+      padding: 8px 12px;
+    }
+
+    .executive-kpi-icon {
+      width: 50px;
+      height: 50px;
+      color: #00345e;
+      font-size: 24px;
+    }
+
+    .executive-kpi span {
+      color: #00162b;
+      font-size: 10px;
+      font-weight: 950;
+    }
+
+    .executive-kpi strong {
+      color: #00162b;
+      margin-top: 3px;
+      font-size: clamp(27px, 2.12vw, 42px);
+    }
+
+    .executive-kpi.loss strong {
+      color: #00162b;
+    }
+
+    .executive-panel-title {
+      background: linear-gradient(180deg, #063e68, #042d4c);
+      color: #ffffff;
+      font-weight: 950;
+    }
+
+    .executive-wave-table,
+    .executive-offender-table {
+      color: #00162b;
+      font-weight: 950;
+    }
+
+    .executive-wave-table th,
+    .executive-offender-table th {
+      color: #00162b;
+      background: #d8ebf8;
+    }
+
+    .executive-wave-table tbody tr:nth-child(even),
+    .executive-offender-table tbody tr:nth-child(even) {
+      background: #edf5fa;
+    }
+
+    .executive-wave-table tfoot td,
+    .executive-offender-table tfoot td {
+      color: #00162b;
+      background: #deedf7;
+    }
+
+    .executive-rate.good {
+      color: #007f3b;
+    }
+
+    .executive-rate.bad {
+      color: #d91d2f;
+    }
+
+    .executive-insight strong {
+      color: #00162b;
+      font-weight: 950;
+    }
+
+    .executive-insight small {
+      color: #183d57;
+      font-weight: 950;
+    }
+
+    .executive-chart-legend-item {
+      color: #00162b;
+      font-weight: 950;
+    }
+
+    .executive-chart-legend-item small {
+      color: #294b63;
+      font-weight: 950;
+    }
+
+    /* KPIs do Fechamento Executivo: cards compactos, modernos e com cores mais fortes. */
+    .executive-kpis {
+      align-self: center;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .executive-kpi {
+      position: relative;
+      height: 78px;
+      min-height: 78px;
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 12px;
+      padding: 10px 15px 10px 13px;
+      overflow: hidden;
+      border: 1px solid #6eb8ef;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #d9efff 0%, #eef8ff 68%, #ffffff 100%);
+      box-shadow: 0 7px 18px rgba(3, 62, 103, .12), inset 0 1px 0 rgba(255,255,255,.8);
+    }
+
+    .executive-kpi::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 5px;
+      background: #1689d8;
+    }
+
+    .executive-kpi::after {
+      content: "";
+      position: absolute;
+      width: 78px;
+      height: 78px;
+      right: -28px;
+      top: -34px;
+      border-radius: 50%;
+      background: rgba(22, 137, 216, .11);
+      pointer-events: none;
+    }
+
+    .executive-kpi.loaded {
+      border-color: #58c889;
+      background: linear-gradient(135deg, #d8f7e5 0%, #effcf4 68%, #ffffff 100%);
+    }
+
+    .executive-kpi.loaded::before {
+      background: #11a858;
+    }
+
+    .executive-kpi.loaded::after {
+      background: rgba(17, 168, 88, .12);
+    }
+
+    .executive-kpi.loss {
+      border-color: #f07885;
+      background: linear-gradient(135deg, #ffe0e4 0%, #fff1f3 68%, #ffffff 100%);
+    }
+
+    .executive-kpi.loss::before {
+      background: #e51f32;
+    }
+
+    .executive-kpi.loss::after {
+      background: rgba(229, 31, 50, .11);
+    }
+
+    .executive-kpi-icon {
+      position: relative;
+      z-index: 1;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #1689d8, #075b9c);
+      color: #fff;
+      font-size: 20px;
+      box-shadow: 0 5px 12px rgba(7, 91, 156, .22);
+    }
+
+    .executive-kpi.loaded .executive-kpi-icon {
+      background: linear-gradient(145deg, #19b865, #087c42);
+      color: #fff;
+      box-shadow: 0 5px 12px rgba(8, 124, 66, .20);
+    }
+
+    .executive-kpi.loss .executive-kpi-icon {
+      background: linear-gradient(145deg, #ef4052, #bd1828);
+      color: #fff;
+      box-shadow: 0 5px 12px rgba(189, 24, 40, .20);
+    }
+
+    .executive-kpi > span:last-child {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      align-content: center;
+      min-width: 0;
+    }
+
+    .executive-kpi span {
+      color: #063354;
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: .045em;
+    }
+
+    .executive-kpi.loaded span {
+      color: #075f36;
+    }
+
+    .executive-kpi.loss span {
+      color: #9f1322;
+    }
+
+    .executive-kpi strong {
+      color: #00162b;
+      margin-top: 4px;
+      font-size: clamp(25px, 1.95vw, 38px);
+      line-height: .92;
+      letter-spacing: -.035em;
+      text-shadow: 0 1px 0 rgba(255,255,255,.7);
+    }
+
+    .executive-kpi.loaded strong {
+      color: #075a34;
+    }
+
+    .executive-kpi.loss strong {
+      color: #a91020;
+    }
+
+    body.dark-mode .executive-kpi {
+      border-color: #277bb5;
+      background: linear-gradient(135deg, #103d5b 0%, #122d40 72%, #102634 100%);
+      box-shadow: 0 7px 18px rgba(0,0,0,.22);
+    }
+
+    body.dark-mode .executive-kpi.loaded {
+      border-color: #249660;
+      background: linear-gradient(135deg, #123f2e 0%, #163629 72%, #122b23 100%);
+    }
+
+    body.dark-mode .executive-kpi.loss {
+      border-color: #b94754;
+      background: linear-gradient(135deg, #4b2229 0%, #392128 72%, #2e1b21 100%);
+    }
+
+    body.dark-mode .executive-kpi span,
+    body.dark-mode .executive-kpi.loaded span,
+    body.dark-mode .executive-kpi.loss span {
+      color: #dceaf4;
+    }
+
+    body.dark-mode .executive-kpi strong,
+    body.dark-mode .executive-kpi.loaded strong,
+    body.dark-mode .executive-kpi.loss strong {
+      color: #ffffff;
+      text-shadow: none;
+    }
+
+    /* Refinamento dos ícones dos KPIs: mais limpos e legíveis. */
+    .executive-kpi {
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 11px;
+    }
+
+    .executive-kpi-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #075b9c;
+      border: 2px solid #1689d8;
+      font-size: 20px;
+      box-shadow: 0 3px 8px rgba(7, 91, 156, .12);
+    }
+
+    .executive-kpi-icon i {
+      line-height: 1;
+      transform: translateY(.5px);
+    }
+
+    .executive-kpi.loaded .executive-kpi-icon {
+      background: #ffffff;
+      color: #087c42;
+      border-color: #11a858;
+      box-shadow: 0 3px 8px rgba(8, 124, 66, .12);
+    }
+
+    .executive-kpi.loss .executive-kpi-icon {
+      background: #ffffff;
+      color: #bd1828;
+      border-color: #e51f32;
+      box-shadow: 0 3px 8px rgba(189, 24, 40, .12);
+    }
+
+    body.dark-mode .executive-kpi-icon {
+      background: #0e2c40;
+      color: #6ec2ff;
+      border-color: #3ba3e9;
+    }
+
+    body.dark-mode .executive-kpi.loaded .executive-kpi-icon {
+      background: #102f24;
+      color: #63d69b;
+      border-color: #2fbd75;
+    }
+
+    body.dark-mode .executive-kpi.loss .executive-kpi-icon {
+      background: #3b2026;
+      color: #ff7a88;
+      border-color: #e84d5d;
+    }
+
+    /* Teste visual dos KPIs: nomenclatura primeiro, sem ícone e valor ao lado. */
+    .executive-kpis {
+      gap: 12px;
+      align-self: center;
+      align-items: center;
+    }
+
+    .executive-kpi {
+      height: 60px;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 18px;
+      padding: 8px 18px 8px 20px;
+      border-radius: 10px;
+      background: #f7fbff;
+      border: 1px solid #2f9ee6;
+      box-shadow: 0 4px 12px rgba(3, 62, 103, .10);
+    }
+
+    .executive-kpi.loaded {
+      background: #f4fcf7;
+      border-color: #20b866;
+    }
+
+    .executive-kpi.loss {
+      background: #fff7f8;
+      border-color: #eb4052;
+    }
+
+    .executive-kpi::before {
+      width: 5px;
+      background: #1689d8;
+    }
+
+    .executive-kpi.loaded::before {
+      background: #11a858;
+    }
+
+    .executive-kpi.loss::before {
+      background: #e51f32;
+    }
+
+    .executive-kpi::after {
+      display: none;
+    }
+
+    .executive-kpi-icon {
+      display: none !important;
+    }
+
+    .executive-kpi .executive-kpi-label {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      min-width: 0;
+      color: #073c65;
+      font: 950 clamp(18px, 1.35vw, 22px)/1 "Arial Black", "Segoe UI Black", "Segoe UI", sans-serif;
+      letter-spacing: .015em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .executive-kpi.loaded .executive-kpi-label {
+      color: #08743f;
+    }
+
+    .executive-kpi.loss .executive-kpi-label {
+      color: #b01828;
+    }
+
+    .executive-kpi strong {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      margin: 0;
+      color: #00162b;
+      font: 950 clamp(27px, 2vw, 39px)/1 "Arial Black", "Segoe UI Black", "Segoe UI", sans-serif;
+      letter-spacing: -.04em;
+      text-shadow: none;
+      white-space: nowrap;
+    }
+
+    .executive-kpi.loaded strong {
+      color: #08743f;
+    }
+
+    .executive-kpi.loss strong {
+      color: #b01828;
+    }
+
+    body.dark-mode .executive-kpi {
+      background: #102b3b;
+      border-color: #2f9ee6;
+    }
+
+    body.dark-mode .executive-kpi.loaded {
+      background: #12372a;
+      border-color: #20b866;
+    }
+
+    body.dark-mode .executive-kpi.loss {
+      background: #3a2026;
+      border-color: #eb4052;
+    }
+
+    body.dark-mode .executive-kpi-label,
+    body.dark-mode .executive-kpi strong {
+      color: #ffffff;
+    }
+
+    /* Scorecard OOT moderno: horizontal, compacto e orientado à meta. */
+    .executive-score-card.executive-score-modern {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 142px;
+      gap: 14px;
+      align-items: stretch;
+      min-width: 0;
+      padding: 14px 16px;
+      border: 1px solid #c6d7e4;
+      border-right: 1px solid #c6d7e4;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #ffffff 0%, #f6fafc 100%);
+      box-shadow: 0 8px 22px rgba(4, 49, 82, .10);
+      overflow: hidden;
+    }
+
+    .executive-score-card.executive-score-modern::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 6px;
+      background: #e51f32;
+    }
+
+    .executive-score-card.executive-score-modern.attention::before {
+      background: #e5a10b;
+    }
+
+    .executive-score-card.executive-score-modern.good::before {
+      background: #11a858;
+    }
+
+    .executive-score-main {
+      min-width: 0;
+      display: grid;
+      align-content: center;
+      gap: 7px;
+      padding-left: 6px;
+    }
+
+    .executive-score-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .executive-score-label > span {
+      color: #25465f;
+      font: 950 12px/1 "Segoe UI", Arial, sans-serif;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .executive-score-label > b {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #fff0f2;
+      color: #c91b2c;
+      font: 950 10px/1 "Segoe UI", Arial, sans-serif;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .executive-score-modern.attention .executive-score-label > b {
+      background: #fff5d9;
+      color: #9a6400;
+    }
+
+    .executive-score-modern.good .executive-score-label > b {
+      background: #e8f8ef;
+      color: #087b42;
+    }
+
+    .executive-score-value {
+      color: #00162b;
+      font: 950 clamp(38px, 3.35vw, 58px)/.92 "Arial Black", "Segoe UI Black", "Segoe UI", sans-serif;
+      letter-spacing: -.055em;
+      white-space: nowrap;
+    }
+
+    .executive-score-progress {
+      position: relative;
+      height: 13px;
+      overflow: visible;
+      border-radius: 999px;
+      background: #dde7ee;
+      box-shadow: inset 0 1px 2px rgba(2, 34, 57, .12);
+    }
+
+    .executive-score-fill {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #f04454, #e51f32);
+    }
+
+    .executive-score-modern.attention .executive-score-fill {
+      background: linear-gradient(90deg, #f7c64d, #e5a10b);
+    }
+
+    .executive-score-modern.good .executive-score-fill {
+      background: linear-gradient(90deg, #36c77c, #11a858);
+    }
+
+    .executive-score-target-marker {
+      position: absolute;
+      top: -6px;
+      width: 3px;
+      height: 25px;
+      transform: translateX(-1px);
+      border-radius: 999px;
+      background: #063e68;
+      box-shadow: 0 0 0 2px rgba(255,255,255,.9);
+    }
+
+    .executive-score-scale {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      color: #61798a;
+      font: 850 9px/1 "Segoe UI", Arial, sans-serif;
+    }
+
+    .executive-score-scale strong {
+      color: #063e68;
+      font-weight: 950;
+      text-align: center;
+    }
+
+    .executive-score-scale span:last-child {
+      text-align: right;
+    }
+
+    .executive-score-side {
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .executive-score-mini {
+      display: grid;
+      align-content: center;
+      padding: 9px 11px;
+      border: 1px solid #c8d9e5;
+      border-radius: 10px;
+      background: #f8fbfd;
+    }
+
+    .executive-score-mini span {
+      color: #61798a;
+      font: 950 9px/1 "Segoe UI", Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    .executive-score-mini strong {
+      margin-top: 5px;
+      color: #063e68;
+      font: 950 clamp(19px, 1.55vw, 27px)/1 "Arial Black", "Segoe UI Black", sans-serif;
+      white-space: nowrap;
+    }
+
+    .executive-score-mini.gap strong {
+      color: #c91b2c;
+    }
+
+    .executive-score-modern.attention .executive-score-mini.gap strong {
+      color: #9a6400;
+    }
+
+    .executive-score-modern.good .executive-score-mini.gap strong {
+      color: #087b42;
+    }
+
+    .executive-score-mini small {
+      margin-top: 4px;
+      color: #526d80;
+      font: 900 8px/1 "Segoe UI", Arial, sans-serif;
+      text-transform: uppercase;
+    }
+
+    body.dark-mode .executive-score-card.executive-score-modern {
+      border-color: #41657b;
+      background: linear-gradient(145deg, #16384b 0%, #102d3d 100%);
+      box-shadow: 0 8px 22px rgba(0,0,0,.24);
+    }
+
+    body.dark-mode .executive-score-value,
+    body.dark-mode .executive-score-label > span {
+      color: #ffffff;
+    }
+
+    body.dark-mode .executive-score-progress {
+      background: #29495c;
+    }
+
+    body.dark-mode .executive-score-target-marker {
+      background: #d9efff;
+      box-shadow: 0 0 0 2px rgba(16,45,61,.9);
+    }
+
+    body.dark-mode .executive-score-scale,
+    body.dark-mode .executive-score-mini span,
+    body.dark-mode .executive-score-mini small {
+      color: #b9cedc;
+    }
+
+    body.dark-mode .executive-score-scale strong,
+    body.dark-mode .executive-score-mini strong {
+      color: #ffffff;
+    }
+
+    body.dark-mode .executive-score-mini {
+      border-color: #41657b;
+      background: #123244;
+    }
+
+    /* Fechamento Executivo: topo legível e estável na tela e no PNG. */
+    .executive-hero {
+      grid-template-columns: 31% minmax(0, 1fr);
+      gap: 14px;
+      padding: 10px 12px;
+      align-items: stretch;
+      overflow: visible;
+    }
+
+    .executive-score-card.executive-score-modern {
+      grid-template-columns: minmax(0, 1fr) 122px;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 11px;
+      align-self: stretch;
+      min-height: 0;
+      overflow: visible;
+    }
+
+    .executive-score-main {
+      gap: 6px;
+      padding-left: 5px;
+      min-height: 0;
+      align-content: center;
+    }
+
+    .executive-score-label > span {
+      font-size: 11px;
+      line-height: 1.15;
+    }
+
+    .executive-score-label > b {
+      min-height: 20px;
+      padding: 0 8px;
+      font-size: 9px;
+      line-height: 1;
+    }
+
+    .executive-score-value {
+      font-size: clamp(38px, 2.9vw, 50px);
+      line-height: 1.05;
+      padding-bottom: 2px;
+    }
+
+    .executive-score-progress {
+      height: 11px;
+    }
+
+    .executive-score-target-marker {
+      top: -5px;
+      height: 21px;
+    }
+
+    .executive-score-scale {
+      font-size: 8px;
+      line-height: 1.1;
+    }
+
+    .executive-score-side {
+      gap: 7px;
+      min-height: 0;
+    }
+
+    .executive-score-mini {
+      padding: 7px 9px;
+      border-radius: 8px;
+      min-height: 0;
+    }
+
+    .executive-score-mini span {
+      font-size: 8px;
+      line-height: 1.1;
+    }
+
+    .executive-score-mini strong {
+      margin-top: 3px;
+      font-size: clamp(18px, 1.25vw, 23px);
+      line-height: 1.05;
+    }
+
+    .executive-score-mini small {
+      margin-top: 3px;
+      font-size: 7px;
+      line-height: 1.1;
+    }
+
+    .executive-hero-copy {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: minmax(58px, auto) 62px;
+      gap: 12px;
+      align-content: center;
+      padding: 8px 10px 7px 2px;
+      overflow: visible;
+    }
+
+    .executive-callout {
+      align-self: center;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 4px 14px;
+      color: #00162b;
+      font-size: clamp(16px, 1.15vw, 22px);
+      line-height: 1.18;
+      overflow: visible;
+    }
+
+    .executive-callout-primary,
+    .executive-callout-secondary {
+      display: inline;
+      min-width: 0;
+    }
+
+    .executive-kpis {
+      height: 62px;
+      min-height: 62px;
+      gap: 10px;
+      align-self: end;
+    }
+
+    .executive-kpi {
+      height: 62px;
+      min-height: 62px;
+      gap: 12px;
+      padding: 8px 14px 9px 16px;
+      border-radius: 9px;
+      overflow: visible;
+    }
+
+    .executive-kpi .executive-kpi-label {
+      font-size: clamp(14px, 1.02vw, 18px);
+      line-height: 1.05;
+      white-space: nowrap;
+    }
+
+    .executive-kpi strong {
+      margin: 0;
+      font-size: clamp(27px, 1.85vw, 35px);
+      line-height: 1.08;
+      white-space: nowrap;
+    }
+
+    .executive-board.executive-exporting .executive-topbar {
+      min-height: 120px;
+      align-items: center;
+      padding-top: 6px;
+      padding-bottom: 6px;
+    }
+
+    .executive-board.executive-exporting .executive-heading strong {
+      font-size: 42px;
+      line-height: 1.08;
+    }
+
+    .executive-board.executive-exporting .executive-heading small {
+      font-size: 14px;
+      line-height: 1.12;
+    }
+
+    .executive-board.executive-exporting .executive-hero {
+      grid-template-columns: 29% minmax(0, 1fr);
+      gap: 12px;
+      padding: 10px 12px;
+      overflow: visible;
+    }
+
+    .executive-board.executive-exporting .executive-score-card.executive-score-modern {
+      grid-template-columns: minmax(0, 1fr) 126px;
+      gap: 10px;
+      padding: 10px 12px;
+      overflow: visible;
+    }
+
+    .executive-board.executive-exporting .executive-score-main {
+      grid-template-rows: 22px 68px 14px 20px;
+      gap: 5px;
+      align-content: center;
+      overflow: visible;
+    }
+
+    .executive-board.executive-exporting .executive-score-label > span {
+      font-size: 12px;
+      line-height: 1.15;
+    }
+
+    .executive-board.executive-exporting .executive-score-label > b {
+      min-height: 22px;
+      padding: 0 9px;
+      font-size: 10px;
+    }
+
+    .executive-board.executive-exporting .executive-score-value {
+      align-self: center;
+      font-size: 58px;
+      line-height: 1.12;
+      letter-spacing: -.035em;
+      padding: 0 0 5px;
+      overflow: visible;
+    }
+
+    .executive-board.executive-exporting .executive-score-progress {
+      height: 13px;
+      margin-top: 1px;
+      overflow: visible;
+    }
+
+    .executive-board.executive-exporting .executive-score-target-marker {
+      top: -5px;
+      height: 23px;
+    }
+
+    .executive-board.executive-exporting .executive-score-scale {
+      margin-top: 2px;
+      color: #24485f;
+      font-size: 12px;
+      font-weight: 950;
+      line-height: 1.15;
+    }
+
+    .executive-board.executive-exporting .executive-score-scale strong {
+      color: #063e68;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .executive-board.executive-exporting .executive-score-mini span {
+      font-size: 9px;
+      line-height: 1.1;
+    }
+
+    .executive-board.executive-exporting .executive-score-mini strong {
+      font-size: 25px;
+      line-height: 1.08;
+    }
+
+    .executive-board.executive-exporting .executive-score-mini small {
+      font-size: 8px;
+      line-height: 1.1;
+    }
+
+    .executive-board.executive-exporting .executive-hero-copy {
+      grid-template-rows: 64px 68px;
+      gap: 14px;
+      align-content: center;
+      padding: 8px 10px 8px 2px;
+      overflow: visible;
+    }
+
+    .executive-board.executive-exporting .executive-callout {
+      align-self: center;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 4px 16px;
+      font-size: 23px;
+      line-height: 1.16;
+      white-space: normal;
+      overflow: visible;
+    }
+
+    .executive-board.executive-exporting .executive-kpis {
+      height: 68px;
+      min-height: 68px;
+      gap: 10px;
+      align-self: end;
+    }
+
+    .executive-board.executive-exporting .executive-kpi {
+      height: 68px;
+      min-height: 68px;
+      gap: 10px;
+      padding: 9px 14px 10px 15px;
+      overflow: visible;
+    }
+
+    .executive-board.executive-exporting .executive-kpi .executive-kpi-label {
+      font-size: 17px;
+      line-height: 1.05;
+    }
+
+    .executive-board.executive-exporting .executive-kpi strong {
+      margin: 0;
+      font-size: 38px;
+      line-height: 1.08;
+    }
+
+    /* Ações complementares do Fechamento Executivo: PNG + Farol para WhatsApp. */
+    .executive-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .executive-actions .executive-share {
+      min-width: 168px;
+      height: 44px;
+      padding: 0 13px;
+      gap: 8px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .executive-copy-farol {
+      min-width: 128px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 0 12px;
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 11px;
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      font: 950 12px/1 "Segoe UI", Arial, sans-serif;
+      text-transform: uppercase;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .executive-copy-farol:hover {
+      background: rgba(255,255,255,.2);
+      transform: translateY(-1px);
+    }
+
+    .executive-copy-farol:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 2px;
+    }
+
+    .executive-board.executive-exporting .executive-actions {
+      display: none !important;
+    }
+
+    @media (max-width: 1450px) {
+      .executive-topbar {
+        gap: 12px;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .executive-status {
+        min-width: 220px;
+      }
+
+      .executive-actions .executive-share {
+        min-width: 150px;
+      }
+
+      .executive-copy-farol {
+        min-width: 116px;
+      }
+    }
+
     .print-table {
       width: 100%;
       border-collapse: collapse;
@@ -8720,6 +10521,7 @@ body.editor-open .global-theme-toggle {
       <section class="view-switch" aria-label="Navegação do painel">
         <button type="button" data-view="justificativas">Justificativas</button>
         <button type="button" data-view="fechamento">Fechamento</button>
+        <button type="button" data-view="fechamentoExecutivo">Fechamento Executivo</button>
       </section>
       <div class="actions">
         <button id="refreshSyncBtn" class="sync-refresh-btn" type="button" title="Atualizar dados do painel" aria-label="Atualizar dados do painel">
@@ -9203,6 +11005,9 @@ body.editor-open .global-theme-toggle {
         <div class="closure tw-grid tw-gap-1.5" id="closureContent"></div>
         <div class="closure-message tw-overflow-hidden tw-rounded-lg tw-border tw-border-[#c7d3df] tw-bg-[#edf4fb]" id="closureMessage"></div>
       </div>
+    </section>
+    <section class="panel-view tailwind-mode" id="fechamentoExecutivoView" aria-label="Fechamento executivo 16 por 9">
+      <div class="executive-board" id="executiveClosureBoard"></div>
     </section>
     <section class="print-table-wrap" aria-label="Tabela para PDF">
       <div id="printRows"></div>
@@ -15048,6 +16853,7 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
       renderJustifications();
       renderSummary();
       renderClosure();
+      renderExecutiveClosure();
       renderPrintTable();
     }
 
@@ -15185,6 +16991,833 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
       `;
       document.getElementById("closureMessage").innerHTML = renderClosureMessageHtml();
     }
+    function executiveWaveIdentity(value) {
+      const label = waveLabel(value);
+      const number = normalize(label || value).match(/\d+/)?.[0];
+      if (number) {
+        const normalizedNumber = Number(number);
+        return {
+          key: `onda-${normalizedNumber}`,
+          label: `Onda ${normalizedNumber}`
+        };
+      }
+      const fallback = normalize(label || value) || "Onda";
+      return {
+        key: plainText(fallback),
+        label: fallback
+      };
+    }
+
+    function executiveSummaryRows() {
+      const waveRows = (data.ondas || []).map(wave => {
+        const planned = plannedRows(wave).length;
+        const shipped = operationalShippedRows(wave);
+        const identity = executiveWaveIdentity(wave);
+        return {
+          ciclo: "AM1",
+          waveKey: identity.key,
+          label: identity.label,
+          planned,
+          shipped,
+          delay: Math.max(0, planned - shipped)
+        };
+      });
+      const complements = extraRows().map(row => ({
+        ciclo: row.ciclo,
+        waveKey: `extra-${plainText(row.ciclo)}`,
+        label: `Onda 1 ${row.ciclo}`,
+        planned: row.planned,
+        shipped: row.shipped,
+        delay: row.delay
+      }));
+      return [...waveRows, ...complements].filter(row => row.planned > 0 || row.shipped > 0);
+    }
+
+    function executiveReasonRows() {
+      const counts = new Map();
+      (data.ondas || []).forEach(wave => {
+        pendingRows(wave, true).forEach(row => {
+          const reason = getJustification(row.rota);
+          if (!reason) return;
+          counts.set(reason, (counts.get(reason) || 0) + 1);
+        });
+      });
+      return [...counts.entries()]
+        .map(([reason, count]) => ({ reason, count }))
+        .sort((a, b) => b.count - a.count || a.reason.localeCompare(b.reason, "pt-BR", { sensitivity: "base" }));
+    }
+
+    function executivePendingJustificationCount() {
+      return (data.ondas || []).reduce((total, wave) => {
+        return total + pendingRows(wave, true).filter(row => !getJustification(row.rota)).length;
+      }, 0);
+    }
+
+    function executiveCarrierRows() {
+      const counts = new Map();
+      (data.ondas || []).forEach(wave => {
+        pendingRows(wave, true).forEach(row => {
+          if (!getJustification(row.rota)) return;
+          const carrier = cleanTransportadora(row.transportadora || "") || "Sem transportadora";
+          counts.set(carrier, (counts.get(carrier) || 0) + 1);
+        });
+      });
+
+      return [...counts.entries()]
+        .map(([carrier, count]) => ({ carrier, count }))
+        .sort((a, b) => b.count - a.count || a.carrier.localeCompare(b.carrier, "pt-BR", { sensitivity: "base" }));
+    }
+
+    function executiveImpactRows() {
+      const result = [];
+      (data.ondas || []).forEach(wave => {
+        pendingRows(wave, true).forEach(row => {
+          const identity = executiveWaveIdentity(row.onda || wave);
+          result.push({
+            route: routeKey(row.rota),
+            waveKey: identity.key,
+            wave: identity.label,
+            carrier: cleanTransportadora(row.transportadora || "") || "Sem transportadora",
+            reason: getJustification(row.rota) || ""
+          });
+        });
+      });
+      return result;
+    }
+
+    function drawExecutiveProgressRing(percent, color) {
+      const canvas = document.getElementById("executiveProgressRing");
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+      const size = Math.min(rect.width, rect.height);
+      const radius = size * .39;
+      const lineWidth = Math.max(14, size * .105);
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      ctx.lineCap = "butt";
+      ctx.lineWidth = lineWidth;
+      ctx.strokeStyle = "#dce6ee";
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeStyle = color;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(Math.max(percent, 0), 100) / 100);
+      ctx.stroke();
+    }
+
+    function drawExecutiveDonut(reasons, total) {
+      const canvas = document.getElementById("executiveDonutChart");
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+
+      const palette = [
+        "#f44752", "#ff973e", "#ffd22e", "#3469ef", "#72d36a",
+        "#8b5cf6", "#06b6d4", "#e879f9", "#f59e0b", "#14b8a6",
+        "#ef4444", "#6366f1"
+      ];
+      const darkMode = document.body.classList.contains("dark-mode");
+      const exporting = !!canvas.closest(".executive-board")?.classList.contains("executive-exporting");
+      const ink = darkMode ? "#ffffff" : "#00162b";
+      const muted = darkMode ? "#c8d8e3" : "#294b63";
+      const cx = rect.width / 2;
+      const cy = rect.height * (exporting ? .53 : .50);
+      const radius = Math.min(rect.height * (exporting ? .36 : .42), rect.width * .19);
+      const inner = radius * .48;
+      let start = -Math.PI / 2;
+      const denominator = Math.max(total, 1);
+      const anchors = [];
+
+      reasons.forEach((item, index) => {
+        const angle = Math.PI * 2 * item.count / denominator;
+        const middle = start + angle / 2;
+        const color = item.pending ? "#94a3b8" : palette[index % palette.length];
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, start, start + angle);
+        ctx.arc(cx, cy, inner, start + angle, start, true);
+        ctx.closePath();
+        ctx.fill();
+
+        if (angle > .28) {
+          const labelRadius = (radius + inner) / 2;
+          ctx.fillStyle = item.pending || [1,2,4,8,9].includes(index % palette.length) ? "#052743" : "#fff";
+          ctx.font = `900 ${Math.max(13, radius * .13)}px Segoe UI`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(String(item.count), cx + Math.cos(middle) * labelRadius, cy + Math.sin(middle) * labelRadius);
+        }
+
+        anchors.push({
+          x: cx + Math.cos(middle) * (radius + 3),
+          y: cy + Math.sin(middle) * (radius + 3),
+          side: "",
+          color
+        });
+        start += angle;
+      });
+
+      // Divide os ofensores de forma equilibrada entre os dois lados.
+      // A ordenacao pelo X preserva, sempre que possivel, os itens mais proximos
+      // de cada lado do grafico e evita concentrar todas as justificativas em um lado.
+      const balancedAnchors = anchors
+        .map((anchor, index) => ({ ...anchor, index }))
+        .sort((a, b) => a.x - b.x || a.y - b.y);
+      const leftCount = Math.ceil(balancedAnchors.length / 2);
+      balancedAnchors.forEach((anchor, position) => {
+        anchors[anchor.index].side = position < leftCount ? "left" : "right";
+      });
+
+      ctx.fillStyle = darkMode ? "#102b3b" : "#fff";
+      ctx.beginPath();
+      ctx.arc(cx, cy, inner - 1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = ink;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = `950 ${Math.max(29, radius * .31)}px Segoe UI`;
+      ctx.fillText(String(total), cx, cy - radius * .13);
+      ctx.font = `950 ${Math.max(11, radius * .105)}px Segoe UI`;
+      ctx.fillText("IMPACTOS", cx, cy + radius * .13);
+      ctx.fillStyle = muted;
+      ctx.font = `850 ${Math.max(9, radius * .08)}px Segoe UI`;
+      ctx.fillText("100%", cx, cy + radius * .32);
+
+      const titleSize = exporting
+        ? Math.max(18, Math.min(23, rect.height * .042))
+        : Math.max(11.5, Math.min(15.5, rect.height * .050));
+      const valueSize = exporting
+        ? Math.max(17, Math.min(21, rect.height * .046))
+        : Math.max(12.5, Math.min(16, rect.height * .056));
+      const maxLabelWidth = rect.width * (exporting ? .36 : .34);
+
+      const wrapLabel = (label, maxWidth) => {
+        ctx.font = `950 ${titleSize}px Segoe UI`;
+        const words = String(label || "").toUpperCase().split(/\s+/).filter(Boolean);
+        const lines = [];
+        let line = "";
+        words.forEach(word => {
+          const candidate = line ? `${line} ${word}` : word;
+          if (line && ctx.measureText(candidate).width > maxWidth && lines.length < 1) {
+            lines.push(line);
+            line = word;
+          } else {
+            line = candidate;
+          }
+        });
+        if (line) lines.push(line);
+        return lines.slice(0, 2);
+      };
+
+      const layoutSide = side => {
+        const indexes = anchors
+          .map((anchor, index) => ({ ...anchor, index }))
+          .filter(item => item.side === side)
+          .sort((a, b) => a.y - b.y);
+
+        if (!indexes.length) return;
+        const top = rect.height * (exporting ? .18 : .12);
+        const bottom = rect.height * (exporting ? .90 : .86);
+        const step = indexes.length === 1 ? 0 : (bottom - top) / (indexes.length - 1);
+
+        indexes.forEach((anchorInfo, orderIndex) => {
+          const index = anchorInfo.index;
+          const item = reasons[index];
+          const color = anchorInfo.color;
+          const sideRight = side === "right";
+          const targetY = indexes.length === 1 ? rect.height * .50 : top + step * orderIndex;
+          const targetX = sideRight ? rect.width - 10 : 10;
+          const elbowX = sideRight ? cx + radius + rect.width * .045 : cx - radius - rect.width * .045;
+
+          ctx.strokeStyle = color;
+          ctx.lineWidth = Math.max(1.5, rect.height * .006);
+          ctx.lineJoin = "round";
+          ctx.beginPath();
+          ctx.moveTo(anchorInfo.x, anchorInfo.y);
+          ctx.lineTo(elbowX, targetY);
+          ctx.lineTo(targetX, targetY);
+          ctx.stroke();
+
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(anchorInfo.x, anchorInfo.y, Math.max(2.6, rect.height * .011), 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.textAlign = sideRight ? "right" : "left";
+          ctx.textBaseline = "alphabetic";
+          ctx.fillStyle = item.pending ? (darkMode ? "#e2e8f0" : "#475569") : ink;
+          ctx.font = `950 ${titleSize}px Segoe UI`;
+
+          const lines = wrapLabel(item.reason, maxLabelWidth);
+          const textX = sideRight ? rect.width - 10 : 10;
+          const lineHeight = titleSize * 1.03;
+          const firstY = targetY - 6 - (lines.length - 1) * lineHeight;
+          lines.forEach((line, lineIndex) => {
+            const textY = firstY + lineIndex * lineHeight;
+            ctx.strokeStyle = darkMode ? "#0b2535" : "rgba(255,255,255,.98)";
+            ctx.lineWidth = Math.max(2, titleSize * .18);
+            ctx.lineJoin = "round";
+            ctx.strokeText(line, textX, textY);
+            ctx.fillText(line, textX, textY);
+          });
+
+          ctx.font = `950 ${valueSize}px Segoe UI`;
+          ctx.fillText(
+            `${item.count} (${formatPercent(total ? item.count / total * 100 : 0).replace(",00%", "%")})`,
+            textX,
+            targetY + valueSize + 4
+          );
+        });
+      };
+
+      layoutSide("left");
+      layoutSide("right");
+    }
+
+    function executiveFarolSnapshot() {
+      const rows = executiveSummaryRows();
+      const totals = rows.reduce((acc, row) => ({
+        planned: acc.planned + row.planned,
+        shipped: acc.shipped + row.shipped,
+        delay: acc.delay + row.delay
+      }), { planned: 0, shipped: 0, delay: 0 });
+
+      const meta = numberValue(data.metaOot) || 85;
+      const percent = totals.planned ? totals.shipped / totals.planned * 100 : 0;
+      const gap = percent - meta;
+      const compactPercent = value => formatPercent(value).replace(",00%", "%");
+      const rateOf = row => row.planned ? row.shipped / row.planned * 100 : 0;
+
+      const am1Rows = rows.filter(row => row.ciclo === "AM1" && row.planned > 0);
+      const bestWave = rows.filter(row => row.planned > 0).slice().sort((a, b) =>
+        rateOf(b) - rateOf(a) || a.delay - b.delay || a.label.localeCompare(b.label, "pt-BR")
+      )[0] || null;
+      const limitingWave = am1Rows.slice().sort((a, b) =>
+        b.delay - a.delay || rateOf(a) - rateOf(b) || a.label.localeCompare(b.label, "pt-BR")
+      )[0] || null;
+
+      const impacts = executiveImpactRows();
+      const classifiedImpacts = impacts.filter(item => item.reason);
+      const pendingImpacts = impacts.filter(item => !item.reason);
+      const classifiedLosses = classifiedImpacts.length;
+      const pendingJustifications = Math.max(pendingImpacts.length, Math.max(0, totals.delay - classifiedLosses));
+
+      const waveStats = new Map();
+      am1Rows.forEach(row => {
+        waveStats.set(row.waveKey, {
+          waveKey: row.waveKey,
+          label: row.label,
+          planned: row.planned,
+          delay: row.delay,
+          oot: rateOf(row),
+          classified: 0,
+          pending: 0,
+          reasonCounts: new Map()
+        });
+      });
+      classifiedImpacts.forEach(item => {
+        if (!waveStats.has(item.waveKey)) return;
+        const wave = waveStats.get(item.waveKey);
+        wave.classified += 1;
+        wave.reasonCounts.set(item.reason, (wave.reasonCounts.get(item.reason) || 0) + 1);
+      });
+      pendingImpacts.forEach(item => {
+        if (waveStats.has(item.waveKey)) waveStats.get(item.waveKey).pending += 1;
+      });
+
+      const aggregateWithWaveWeight = (items, keySelector, nameKey) => {
+        const map = new Map();
+        items.forEach(item => {
+          const key = keySelector(item);
+          if (!map.has(key)) map.set(key, { [nameKey]: key, count: 0, waveCounts: new Map() });
+          const entry = map.get(key);
+          entry.count += 1;
+          const waveKey = item.waveKey || plainText(item.wave);
+          const currentWave = entry.waveCounts.get(waveKey) || { wave: item.wave, count: 0 };
+          currentWave.count += 1;
+          entry.waveCounts.set(waveKey, currentWave);
+        });
+
+        return [...map.values()].map(entry => ({
+          ...entry,
+          percent: classifiedLosses ? entry.count / classifiedLosses * 100 : 0,
+          waves: [...entry.waveCounts.entries()]
+            .map(([waveKey, info]) => {
+              const waveDelay = waveStats.get(waveKey)?.delay || 0;
+              return {
+                wave: info.wave,
+                count: info.count,
+                weight: waveDelay ? info.count / waveDelay * 100 : 0
+              };
+            })
+            .sort((a, b) => b.count - a.count || a.wave.localeCompare(b.wave, "pt-BR", { sensitivity: "base" }))
+        })).sort((a, b) =>
+          b.count - a.count ||
+          String(a[nameKey]).localeCompare(String(b[nameKey]), "pt-BR", { sensitivity: "base" })
+        );
+      };
+
+      const offenders = aggregateWithWaveWeight(classifiedImpacts, item => item.reason, "reason");
+      const carrierOffenders = aggregateWithWaveWeight(classifiedImpacts, item => item.carrier, "carrier");
+
+      const waveOffenders = [...waveStats.values()]
+        .filter(item => item.delay > 0)
+        .map(item => ({
+          ...item,
+          reasons: [...item.reasonCounts.entries()]
+            .map(([reason, count]) => ({ reason, count }))
+            .sort((a, b) => b.count - a.count || a.reason.localeCompare(b.reason, "pt-BR", { sensitivity: "base" })),
+          percent: classifiedLosses ? item.classified / classifiedLosses * 100 : 0,
+          weightInWave: item.planned ? item.delay / item.planned * 100 : 0,
+          justifiedWeight: item.delay ? item.classified / item.delay * 100 : 0
+        }))
+        .sort((a, b) => {
+          const waveNumber = item => Number(String(item.label || "").match(/\d+/)?.[0] || 999);
+          return waveNumber(a) - waveNumber(b) || a.label.localeCompare(b.label, "pt-BR", { numeric: true, sensitivity: "base" });
+        });
+
+      const pendingWaves = [...waveStats.values()]
+        .filter(item => item.pending > 0)
+        .sort((a, b) => b.pending - a.pending || a.label.localeCompare(b.label, "pt-BR"));
+
+      const topReason = offenders[0] || null;
+      const health = percent >= meta
+        ? { label: "Saudável", icon: "✅", message: "dentro da meta" }
+        : percent >= meta - 5
+          ? { label: "Atenção", icon: "⚠️", message: "próximo da meta" }
+          : { label: "Crítico", icon: "🔴", message: "abaixo da meta" };
+
+      const actions = [
+        limitingWave ? {
+          title: limitingWave.label,
+          text: `Priorizar a ${limitingWave.label}: ${limitingWave.delay} perda(s), OOT ${compactPercent(rateOf(limitingWave))}.`
+        } : null,
+        topReason ? {
+          title: topReason.reason,
+          text: `${topReason.count} perda(s) justificadas ligadas a este motivo.`
+        } : null
+      ].filter(Boolean);
+
+      return {
+        rows,
+        totals,
+        meta,
+        percent,
+        gap,
+        bestWave,
+        limitingWave,
+        classifiedLosses,
+        pendingJustifications,
+        offenders,
+        carrierOffenders,
+        waveOffenders,
+        pendingWaves,
+        health,
+        actions,
+        compactPercent,
+        rateOf
+      };
+    }
+
+    function buildExecutiveFarolWhatsAppText() {
+      const snapshot = executiveFarolSnapshot();
+      const {
+        totals, meta, percent, gap, bestWave, limitingWave,
+        classifiedLosses, pendingJustifications, offenders, carrierOffenders,
+        waveOffenders, health, compactPercent, rateOf
+      } = snapshot;
+
+      const gapLabel = `${gap >= 0 ? "+" : "-"}${Math.abs(gap).toLocaleString("pt-BR", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      })} p.p.`;
+
+      const rankedLines = (items, formatter) => items
+        .map((item, index) => `${index + 1}. ${formatter(item)}`)
+        .join("\n");
+
+      const reasonLines = offenders.length
+        ? rankedLines(
+            offenders,
+            item => `*${item.reason}* — ${item.count} rota(s) · ${compactPercent(item.percent)} do total justificado`
+          )
+        : "• Sem perdas justificadas.";
+
+      const carrierLines = carrierOffenders.length
+        ? rankedLines(
+            carrierOffenders,
+            item => `*${item.carrier}* — ${item.count} rota(s) · ${compactPercent(item.percent)} do total justificado`
+          )
+        : "• Sem transportadoras justificadas.";
+
+      const wrapFarolLine = (text, firstPrefix = "   • ", continuationPrefix = "     ", maxLength = 46) => {
+        const words = String(text || "").trim().split(/\s+/).filter(Boolean);
+        if (!words.length) return firstPrefix.trimEnd();
+        const lines = [];
+        let line = "";
+        words.forEach(word => {
+          const candidate = line ? `${line} ${word}` : word;
+          if (line && candidate.length > maxLength) {
+            lines.push(line);
+            line = word;
+          } else {
+            line = candidate;
+          }
+        });
+        if (line) lines.push(line);
+        return lines
+          .map((part, index) => `${index === 0 ? firstPrefix : continuationPrefix}${part}`)
+          .join("\n");
+      };
+
+      const waveLines = waveOffenders.length
+        ? waveOffenders.map((item, index) => {
+            const header = `${index + 1}. *${item.label}* — ${item.classified} just.`;
+            const metrics = `   ${compactPercent(item.percent)} do total justificado · Peso da onda ${compactPercent(item.weightInWave)}`;
+            const reasonLinesForWave = item.reasons?.length
+              ? item.reasons
+                  .map(reason => wrapFarolLine(`${reason.count}x ${reason.reason}`))
+                  .join("\n")
+              : "   • Sem motivo justificado";
+            return `${header}\n${metrics}\n${reasonLinesForWave}`;
+          }).join("\n\n")
+        : "• Sem ondas ofensoras.";
+
+      const pendingLines = pendingJustifications
+        ? [
+            "",
+            "⏳ *PENDENTES DE JUSTIFICATIVA*",
+            `${pendingJustifications} rota(s) · ${compactPercent(totals.delay ? pendingJustifications / totals.delay * 100 : 0)} das perdas ·`
+          ]
+        : [];
+
+      return [
+        "📊 *FAROL DA EXPEDIÇÃO SSP15*",
+        `📅 ${data.data || new Date().toLocaleDateString("pt-BR")} · FECHAMENTO`,
+        "",
+        `🏁 OOT *${compactPercent(percent)}* · Meta *${compactPercent(meta)}* · Gap *${gapLabel}*`,
+        `${health.icon} ${health.label} · ${health.message}`,
+        `📦 ${totals.planned} planejadas · ${totals.shipped} expedidas · ${totals.delay} perdas`,
+        `⭐ Melhor: *${bestWave?.label || "—"}*${bestWave ? ` · ${compactPercent(rateOf(bestWave))}` : ""}`,
+        `⚠️ Limitante: *${limitingWave?.label || "—"}*${limitingWave ? ` · ${limitingWave.delay} perda(s) · OOT ${compactPercent(rateOf(limitingWave))}` : ""}`,
+        "",
+        `🌊 *OFENSORES POR ONDAS* · ${classifiedLosses} justificada(s)`,
+        waveLines,
+        "",
+        "🚚 *OFENSORES POR TRANSPORTADORAS*",
+        carrierLines,
+        "",
+        "🚨 *OFENSORES POR MOTIVOS*",
+        reasonLines,
+        ...pendingLines
+      ].join("\n");
+    }
+
+    async function writeExecutiveClipboard(text) {
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      } catch {}
+
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      textarea.style.pointerEvents = "none";
+      document.body.appendChild(textarea);
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+      let copied = false;
+      try {
+        copied = document.execCommand("copy");
+      } catch {
+        copied = false;
+      }
+      textarea.remove();
+      return copied;
+    }
+
+    async function copyExecutiveFarolWhatsApp(showFeedback = true) {
+      const button = document.getElementById("executiveCopyFarolBtn");
+      const original = button?.innerHTML || "";
+      const copied = await writeExecutiveClipboard(buildExecutiveFarolWhatsAppText());
+      if (showFeedback && button) {
+        button.innerHTML = copied
+          ? `<i class="bi bi-check2-circle" aria-hidden="true"></i><span>Farol copiado</span>`
+          : `<i class="bi bi-exclamation-circle" aria-hidden="true"></i><span>Não copiou</span>`;
+        window.setTimeout(() => {
+          button.innerHTML = original || `<i class="bi bi-clipboard-check" aria-hidden="true"></i><span>Copiar Farol</span>`;
+        }, 1800);
+      }
+      return copied;
+    }
+
+    async function downloadExecutiveClosureImage() {
+      const button = document.getElementById("executiveShareBtn");
+      const board = document.getElementById("executiveClosureBoard");
+      if (!board || typeof window.html2canvas !== "function") {
+        if (button) button.innerHTML = `<i class="bi bi-exclamation-circle" aria-hidden="true"></i><span>Não foi possível</span>`;
+        window.setTimeout(() => {
+          if (button) button.innerHTML = `<i class="bi bi-file-earmark-image" aria-hidden="true"></i><span>PNG + Farol</span>`;
+        }, 1800);
+        return;
+      }
+
+      const originalButtonContent = button?.innerHTML || "";
+      if (button) {
+        button.disabled = true;
+        button.innerHTML = `<i class="bi bi-hourglass-split" aria-hidden="true"></i><span>Gerando PNG</span>`;
+      }
+
+      const farolCopied = await copyExecutiveFarolWhatsApp(false);
+
+      try {
+        await document.fonts?.ready;
+        board.classList.add("executive-exporting");
+        await new Promise(resolve => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
+
+        const exportReasonRows = executiveReasonRows();
+        const exportPending = Math.max(0, executivePendingJustificationCount());
+        const exportChartReasons = [
+          ...exportReasonRows,
+          ...(exportPending ? [{ reason: "Pendentes", count: exportPending, pending: true }] : [])
+        ];
+        const exportChartTotal = exportChartReasons.reduce((sum, item) => sum + item.count, 0);
+        drawExecutiveDonut(exportChartReasons, exportChartTotal);
+        await new Promise(resolve => window.requestAnimationFrame(resolve));
+
+        const capture = await window.html2canvas(board, {
+          backgroundColor: "#f8fbfe",
+          scale: 2,
+          width: 2200,
+          height: 1650,
+          windowWidth: 2200,
+          windowHeight: 1650,
+          useCORS: true,
+          logging: false,
+          imageTimeout: 15000,
+          removeContainer: true
+        });
+
+        const blob = await new Promise(resolve => capture.toBlob(resolve, "image/png"));
+        if (!blob) throw new Error("Falha ao gerar o arquivo PNG.");
+
+        const dateSlug = String(data.data || new Date().toLocaleDateString("pt-BR"))
+          .replace(/[^0-9]+/g, "-")
+          .replace(/^-|-$/g, "");
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `fechamento-am-${dateSlug || "relatorio"}.png`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        if (button) {
+          button.innerHTML = farolCopied
+            ? `<i class="bi bi-check2-circle" aria-hidden="true"></i><span>PNG + Farol OK</span>`
+            : `<i class="bi bi-check2-circle" aria-hidden="true"></i><span>PNG baixado</span>`;
+        }
+      } catch (error) {
+        console.error("Não foi possível baixar o PNG do fechamento:", error);
+        if (button) button.innerHTML = `<i class="bi bi-exclamation-circle" aria-hidden="true"></i><span>Não foi possível</span>`;
+      } finally {
+        board.classList.remove("executive-exporting");
+        window.requestAnimationFrame(() => {
+          const screenReasonRows = executiveReasonRows();
+          const screenPending = Math.max(0, executivePendingJustificationCount());
+          const screenChartReasons = [
+            ...screenReasonRows,
+            ...(screenPending ? [{ reason: "Pendentes", count: screenPending, pending: true }] : [])
+          ];
+          const screenChartTotal = screenChartReasons.reduce((sum, item) => sum + item.count, 0);
+          drawExecutiveDonut(screenChartReasons, screenChartTotal);
+        });
+      }
+
+      window.setTimeout(() => {
+        if (button) {
+          button.disabled = false;
+          button.innerHTML = originalButtonContent || `<i class="bi bi-file-earmark-image" aria-hidden="true"></i><span>PNG + Farol</span>`;
+        }
+      }, 1800);
+    }
+
+    function renderExecutiveClosure() {
+      const board = document.getElementById("executiveClosureBoard");
+      if (!board) return;
+      const rows = executiveSummaryRows();
+      const totals = rows.reduce((acc, row) => ({
+        planned: acc.planned + row.planned,
+        shipped: acc.shipped + row.shipped,
+        delay: acc.delay + row.delay
+      }), { planned: 0, shipped: 0, delay: 0 });
+      const meta = numberValue(data.metaOot) || 85;
+      const percent = totals.planned ? totals.shipped / totals.planned * 100 : 0;
+      const belowTarget = percent < meta;
+      const gap = percent - meta;
+      const reasonRows = executiveReasonRows();
+      const justifiedLosses = reasonRows.reduce((sum, item) => sum + item.count, 0);
+      const pendingJustifications = Math.max(0, executivePendingJustificationCount());
+      const chartReasons = [
+        ...reasonRows,
+        ...(pendingJustifications ? [{ reason: "Pendentes", count: pendingJustifications, pending: true }] : [])
+      ];
+      const chartTotal = chartReasons.reduce((sum, item) => sum + item.count, 0);
+      const colors = [
+        "#f44752", "#ff973e", "#ffd22e", "#3469ef", "#72d36a",
+        "#8b5cf6", "#06b6d4", "#e879f9", "#f59e0b", "#14b8a6",
+        "#ef4444", "#6366f1", "#22c55e", "#0ea5e9", "#a855f7", "#f97316"
+      ];
+      const highestWaves = rows.filter(row => row.ciclo === "AM1").slice().sort((a, b) => b.delay - a.delay).slice(0, 2);
+      const topWaveLoss = highestWaves.reduce((sum, row) => sum + row.delay, 0);
+      const topWaveShare = totals.delay ? topWaveLoss / totals.delay * 100 : 0;
+      const topReasons = reasonRows.slice(0, 2);
+      const topReasonLoss = topReasons.reduce((sum, row) => sum + row.count, 0);
+      const topReasonShare = justifiedLosses ? topReasonLoss / justifiedLosses * 100 : 0;
+      const targetRows = rows.filter(row => row.ciclo === "AM1" && row.planned && row.shipped / row.planned * 100 >= meta);
+      const statusText = belowTarget ? "Abaixo da meta" : "Meta atingida";
+      const statusColor = belowTarget ? "#ef3340" : "#11a858";
+      const scoreTone = percent >= meta ? "good" : percent >= meta - 2 ? "attention" : "critical";
+      const scoreStatus = scoreTone === "good" ? "Meta atingida" : scoreTone === "attention" ? "Atenção" : "Crítico";
+      const scoreProgress = Math.max(0, Math.min(percent, 100));
+      const scoreTarget = Math.max(0, Math.min(meta, 100));
+      const compactPercent = value => formatPercent(value).replace(",00%", "%");
+
+      board.innerHTML = `
+        <header class="executive-topbar">
+          <div class="executive-heading">
+            <i class="bi bi-truck" aria-hidden="true"></i>
+            <strong>Fechamento AM <span aria-hidden="true">|</span> ${escapeHtml(data.data || "--/--/----")}</strong>
+            <small>Visão executiva - expedição e transportes</small>
+          </div>
+          <div class="executive-status ${belowTarget ? "" : "on-target"}">
+            <strong>${statusText}</strong>
+            <small>OOT ${compactPercent(percent)} (meta ${compactPercent(meta)})</small>
+          </div>
+          <div class="executive-actions" data-html2canvas-ignore="true">
+            <button class="executive-copy-farol" id="executiveCopyFarolBtn" type="button" title="Copiar o Farol da Expedição para colar no WhatsApp">
+              <i class="bi bi-clipboard-check" aria-hidden="true"></i><span>Copiar Farol</span>
+            </button>
+            <button class="executive-share" id="executiveShareBtn" type="button" title="Baixar o fechamento em PNG e copiar o Farol para o WhatsApp">
+              <i class="bi bi-file-earmark-image" aria-hidden="true"></i><span>PNG + Farol</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="executive-hero">
+          <div class="executive-score-card executive-score-modern ${scoreTone}">
+            <div class="executive-score-main">
+              <div class="executive-score-label">
+                <span>OOT FINAL</span>
+                <b>${scoreStatus}</b>
+              </div>
+              <div class="executive-score-value">${compactPercent(percent)}</div>
+              <div class="executive-score-progress" aria-label="OOT ${compactPercent(percent)} com meta ${compactPercent(meta)}">
+                <span class="executive-score-fill" style="width:${scoreProgress}%"></span>
+                <i class="executive-score-target-marker" style="left:${scoreTarget}%"></i>
+              </div>
+              <div class="executive-score-scale">
+                <span>0%</span>
+                <strong>Meta ${compactPercent(meta)}</strong>
+                <span>100%</span>
+              </div>
+            </div>
+            <div class="executive-score-side">
+              <article class="executive-score-mini meta">
+                <span>Meta</span>
+                <strong>${compactPercent(meta)}</strong>
+              </article>
+              <article class="executive-score-mini gap">
+                <span>Gap</span>
+                <strong>${gap > 0 ? "+" : ""}${gap.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} p.p.</strong>
+                <small>${belowTarget ? "abaixo da meta" : "acima da meta"}</small>
+              </article>
+            </div>
+          </div>
+          <div class="executive-hero-copy">
+            <p class="executive-callout"><span class="executive-callout-primary"><em>${totals.delay} ${totals.delay === 1 ? "perda" : "perdas"}</em> em ${totals.planned} rotas planejadas.</span><span class="executive-callout-secondary">${highestWaves.length ? `${highestWaves.map(row => row.label).join(" + ")}: <em>${compactPercent(topWaveShare)}</em> das perdas.` : "Sem perdas registradas nas ondas."}</span></p>
+            <div class="executive-kpis">
+              <article class="executive-kpi">
+                <span class="executive-kpi-label">Planejadas</span>
+                <strong>${totals.planned}</strong>
+              </article>
+              <article class="executive-kpi loaded">
+                <span class="executive-kpi-label">Expedidas</span>
+                <strong>${totals.shipped}</strong>
+              </article>
+              <article class="executive-kpi loss">
+                <span class="executive-kpi-label">Perdas</span>
+                <strong>${totals.delay}</strong>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="executive-main-grid">
+          <article class="executive-panel">
+            <h3 class="executive-panel-title"><i class="bi bi-list-ul" aria-hidden="true"></i>Fechamento por onda</h3>
+            <table class="executive-wave-table">
+              <thead><tr><th>Onda</th><th>Planejadas</th><th>Expedidas</th><th>Perdas</th><th>OOT</th></tr></thead>
+              <tbody>${rows.map(row => {
+                const rate = row.planned ? row.shipped / row.planned * 100 : 0;
+                return `<tr><td>${escapeHtml(row.label)}</td><td>${row.planned}</td><td>${row.shipped}</td><td>${row.delay}</td><td class="executive-rate ${rate >= meta ? "good" : "bad"}">${compactPercent(rate)}</td></tr>`;
+              }).join("")}</tbody>
+              <tfoot><tr><td>Total</td><td>${totals.planned}</td><td>${totals.shipped}</td><td>${totals.delay}</td><td class="executive-rate ${belowTarget ? "bad" : "good"}">${compactPercent(percent)}</td></tr></tfoot>
+            </table>
+          </article>
+          <article class="executive-panel">
+            <h3 class="executive-panel-title"><i class="bi bi-pie-chart-fill" aria-hidden="true"></i>Total geral · todas as ondas · participação por motivo</h3>
+            <div class="executive-chart-layout">
+              <div class="executive-donut-wrap"><canvas id="executiveDonutChart" role="img" aria-label="${escapeHtml(chartReasons.length ? `Distribuição dos impactos: ${chartReasons.map(item => `${item.reason}, ${item.count}`).join("; ")}` : "Sem impactos registrados")}"></canvas></div>
+            </div>
+          </article>
+        </section>
+
+        <section class="executive-bottom-grid">
+          <article class="executive-panel">
+            <h3 class="executive-panel-title"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>Ofensores</h3>
+            <table class="executive-offender-table ${reasonRows.length >= 7 ? "dense" : ""}">
+              <thead><tr><th>Motivo</th><th>Rotas afetadas</th><th>% do total</th></tr></thead>
+              <tbody>${reasonRows.length ? reasonRows.map((item, index) => `<tr><td><span class="executive-offender-reason"><i style="background:${colors[index % colors.length]}"></i>${escapeHtml(item.reason)}</span></td><td>${item.count}</td><td>${compactPercent(justifiedLosses ? item.count / justifiedLosses * 100 : 0)}</td></tr>`).join("") : `<tr><td colspan="3">Sem perdas justificadas</td></tr>`}</tbody>
+              <tfoot><tr><td>Total justificado</td><td>${justifiedLosses}</td><td>${compactPercent(justifiedLosses ? 100 : 0)}</td></tr></tfoot>
+            </table>
+          </article>
+          <article class="executive-panel">
+            <h3 class="executive-panel-title"><i class="bi bi-bar-chart-fill" aria-hidden="true"></i>Leitura do fechamento</h3>
+            <div class="executive-insights">
+              <div class="executive-insight"><span class="executive-insight-number">1</span><span><strong>${highestWaves.length ? `${highestWaves.map(row => row.label).join(" e ")} precisam de plano imediato.` : "Ondas sem perdas críticas."}</strong><small>${highestWaves.length ? `${highestWaves.map(row => `${compactPercent(row.planned ? row.shipped / row.planned * 100 : 0)} OOT`).join(" e ")}, com ${topWaveLoss} perdas (${compactPercent(topWaveShare)} do total).` : "Todas as rotas previstas foram expedidas."}</small></span></div>
+              <div class="executive-insight"><span class="executive-insight-number">2</span><span><strong>${topReasons.length ? `${topReasons.map(row => row.reason).join(" + ")} representam ${compactPercent(topReasonShare)} das perdas justificadas.` : "Sem motivos ofensores justificados."}</strong><small>${topReasons.length ? `${topReasonLoss} de ${justifiedLosses} perdas justificadas exigem ação coordenada entre as áreas responsáveis.` : pendingJustifications ? `${pendingJustifications} rota(s) seguem pendentes de justificativa.` : "Nenhuma ação corretiva adicional necessária."}</small></span></div>
+              <div class="executive-insight"><span class="executive-insight-number">3</span><span><strong>${targetRows.length ? `${targetRows.map(row => row.label).join(", ")} ${targetRows.length === 1 ? "ficou" : "ficaram"} acima da meta de ${compactPercent(meta)}.` : `Nenhuma onda atingiu a meta de ${compactPercent(meta)}.`}</strong><small>${targetRows.length ? targetRows.map(row => compactPercent(row.shipped / row.planned * 100)).join(", ") : "Priorizar recuperação do plano nas próximas ondas."}</small></span></div>
+            </div>
+          </article>
+        </section>
+      `;
+      document.getElementById("executiveCopyFarolBtn")?.addEventListener("click", () => copyExecutiveFarolWhatsApp(true));
+      document.getElementById("executiveShareBtn")?.addEventListener("click", downloadExecutiveClosureImage);
+      window.requestAnimationFrame(() => {
+        drawExecutiveDonut(chartReasons, chartTotal);
+      });
+    }
     function renderViews() {
       const app = document.querySelector(".app");
       const simpleMode = currentView === "docas" && dockDisplayMode === "simple";
@@ -15206,6 +17839,7 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
       document.querySelector(".legend")?.classList.toggle("active", currentView === "docas" && !simpleMode);
       document.getElementById("justificativasView").classList.toggle("active", currentView === "justificativas");
       document.getElementById("fechamentoView").classList.toggle("active", currentView === "fechamento");
+      document.getElementById("fechamentoExecutivoView").classList.toggle("active", currentView === "fechamentoExecutivo");
       if (simpleMode) renderSimpleDocks();
       if (routesMode) renderRoutesMode();
       if (dashboardMode) renderDashboard();
@@ -15213,6 +17847,7 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
       renderJustifications();
       renderSummary();
       renderClosure();
+      renderExecutiveClosure();
     }
     function render() {
       document.getElementById("titulo").textContent = data.titulo;
