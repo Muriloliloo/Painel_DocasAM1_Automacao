@@ -5,7 +5,9 @@ const {
   isYmsProviderReady
 } = require("./yms-provider");
 const {
-  createBigQueryYmsProvider
+  createBigQueryYmsProvider,
+  loadRuntimeSql,
+  loadPrimaryRuntimeSql
 } = require("./bigquery-yms-provider");
 
 function createConfiguredYmsProvider(config, { queryExecutor } = {}) {
@@ -15,7 +17,10 @@ function createConfiguredYmsProvider(config, { queryExecutor } = {}) {
 
   return createBigQueryYmsProvider({
     queryExecutor,
-    queryCacheMs: config.ymsQueryCacheMs
+    queryCacheMs: config.ymsQueryCacheMs,
+    sqlLoader: config.ymsSqlProfile === "lean"
+      ? loadPrimaryRuntimeSql
+      : loadRuntimeSql
   });
 }
 
