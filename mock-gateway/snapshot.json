@@ -1,0 +1,11 @@
+{
+  "homologation": true,
+  "snapshotComplete": true,
+  "emptyConfirmed": true,
+  "sources": {
+    "dispatch": "ok",
+    "aduana": "ok"
+  },
+  "operacional": [],
+  "aduana": []
+}
