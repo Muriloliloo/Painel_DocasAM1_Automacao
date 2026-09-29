@@ -13320,6 +13320,7 @@ function normalizeAutomaticSourceConfig(input = {}) {
     ymsPath: normalizeAutomaticPath(input.ymsPath, "yms"),
     ymsEnabled: input.ymsEnabled === true,
     ymsPreview: input.ymsPreview === true,
+    homologation: input.homologation === true,
     facilityId: normalize(input.facilityId),
     siteId: normalize(input.siteId),
     groupId: normalize(input.groupId),
@@ -14220,7 +14221,9 @@ function renderAutomaticStatusBadge(status = automaticConnectionStatus()) {
       tone = stale ? "is-stale" : "is-auto";
       icon = stale ? "bi-clock-history" : "bi-lightning-charge-fill";
       title = stale ? "DESATUALIZADO" : "AUTOMÁTICO";
-      detail = automaticStatusTimeLabel(status.lastSuccessAt) || "Online";
+      detail = automaticSourceState.config?.homologation
+        ? "Homologação"
+        : (automaticStatusTimeLabel(status.lastSuccessAt) || "Online");
     } else {
       tone = "is-loading";
       icon = "bi-arrow-repeat";
