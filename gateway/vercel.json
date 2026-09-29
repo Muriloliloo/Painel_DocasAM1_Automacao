@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/health", "destination": "/api/index" },
+    { "source": "/ready", "destination": "/api/index" },
+    { "source": "/snapshot", "destination": "/api/index" },
+    { "source": "/dispatch", "destination": "/api/index" },
+    { "source": "/customs", "destination": "/api/index" },
+    { "source": "/yms", "destination": "/api/index" }
+  ]
+}
