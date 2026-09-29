@@ -21,19 +21,34 @@ WITH cycle_summary AS (
     AND SAFE_CAST(POSITION AS INT64) IN UNNEST(@wave_numbers)
 ),
 
-processos AS (
+processos_raw AS (
   SELECT
     cs.facility_id,
     cs.operation_date,
     cs.cycle_name,
     cs.wave_number,
     plm.PROCESS_ID AS process_id,
+    plm.JOURNEY_ID AS journey_id,
     NULLIF(CAST(plm.ROUTE_PLAN_ID AS STRING), '') AS planned_route_id,
     NULLIF(plm.CLUSTER_ROUTE_NAME, '') AS cluster_route_name
   FROM cycle_summary cs
   JOIN `meli-bi-data.WHOWNER.BT_LOADING_ZONES_PROCESS_LM` plm
     ON plm.CYCLE_SUMMARY_ID = cs.CYCLE_SUMMARY_ID
   WHERE plm.PROCESS_ID IS NOT NULL
+),
+
+processos AS (
+  SELECT * EXCEPT(rn)
+  FROM (
+    SELECT
+      pr.*,
+      ROW_NUMBER() OVER (
+        PARTITION BY process_id
+        ORDER BY operation_date DESC, wave_number ASC, journey_id DESC
+      ) AS rn
+    FROM processos_raw pr
+  )
+  WHERE rn = 1
 ),
 
 rotas AS (
@@ -72,7 +87,7 @@ event_source AS (
   FROM `meli-bi-data.WHOWNER.BT_YMS_LOADING_ZONES_EVENTS`
   WHERE MILE = 'last_mile'
     AND DATE(CREATED_AT)
-      BETWEEN DATE_SUB(operation_filter, INTERVAL 1 DAY)
+      BETWEEN DATE_SUB(operation_filter, INTERVAL 2 DAY)
           AND DATE_ADD(operation_filter, INTERVAL 1 DAY)
 ),
 
@@ -146,6 +161,9 @@ eventos AS (
   FROM processos p
   LEFT JOIN event_source e
     ON e.process_id = p.process_id
+   AND DATE(e.CREATED_AT)
+       BETWEEN DATE_SUB(p.operation_date, INTERVAL 1 DAY)
+           AND DATE_ADD(p.operation_date, INTERVAL 1 DAY)
   GROUP BY p.process_id
 )
 
