@@ -1,0 +1,53 @@
+name: Publica Painel Automacao
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Monta site
+        run: |
+          mkdir -p _site/assets
+          cp index.html _site/
+          cp app.js _site/
+          cp automation-config.js _site/
+          cp closure-status.js _site/
+          cp firebase-config.js _site/
+          cp ondas-dados.js _site/
+          cp .nojekyll _site/
+          cp logo-dhl.png _site/
+          cp logo-mercado-livre.png _site/
+          cp -R assets/. _site/assets/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
