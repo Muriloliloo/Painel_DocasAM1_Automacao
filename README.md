@@ -1,6 +1,6 @@
-# Controle de Docas SSP15 - AM1
+# Controle de Docas SSP15 - AM1 • Automacao
 
-Painel web para controle de ondas, docas, rotas carregadas, rotas expedidas, justificativas e fechamento operacional.
+Projeto dedicado a evolucao automatizada do painel de docas AM1. O repositorio operacional original permanece separado e nao recebe as alteracoes desta versao.\n\nPainel web para controle de ondas, docas, rotas carregadas, rotas expedidas, justificativas e fechamento operacional.
 
 ## Como Publicar no GitHub Pages
 
@@ -13,7 +13,7 @@ Painel web para controle de ondas, docas, rotas carregadas, rotas expedidas, jus
    - Folder: **/root**
 5. Clique em **Save**.
 6. O GitHub vai gerar um link parecido com:
-   `https://seu-usuario.github.io/nome-do-repositorio/`
+   `https://muriloliloo.github.io/Painel_DocasAM1_Automacao/`
 
 ## Arquivos Principais
 
