@@ -28,7 +28,7 @@ jobs:
 
       - name: Monta site
         run: |
-          mkdir -p _site/assets
+          mkdir -p _site/assets _site/mock-gateway
           cp index.html _site/
           cp app.js _site/
           cp automation-config.js _site/
@@ -39,6 +39,7 @@ jobs:
           cp logo-dhl.png _site/
           cp logo-mercado-livre.png _site/
           cp -R assets/. _site/assets/
+          cp -R mock-gateway/. _site/mock-gateway/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
