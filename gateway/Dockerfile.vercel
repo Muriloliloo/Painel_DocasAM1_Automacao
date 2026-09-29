@@ -1,0 +1,14 @@
+FROM node:24-bookworm-slim
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV BIND_HOST=0.0.0.0
+
+COPY package.json ./
+RUN npm install --omit=dev --ignore-scripts && npm cache clean --force
+
+COPY src ./src
+COPY sql ./sql
+
+CMD ["npm", "start"]
