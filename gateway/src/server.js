@@ -74,6 +74,7 @@ function applyCors(request, response, config) {
   response.setHeader("Access-Control-Allow-Origin", origin);
   response.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   response.setHeader("Access-Control-Allow-Headers", "Accept");
+  response.setHeader("Access-Control-Expose-Headers", "X-Painel-Gateway-Mode");
   response.setHeader("Access-Control-Max-Age", "600");
 }
 
@@ -121,7 +122,10 @@ function sendJson(response, status, payload, config) {
       error: { code: "RESPONSE_TOO_LARGE", message: "Resposta excedeu o limite seguro configurado." }
     }, { ...config, maxResponseBytes: Number.MAX_SAFE_INTEGER });
   }
-  response.writeHead(status, commonHeaders());
+  response.writeHead(status, {
+    ...commonHeaders(),
+    "X-Painel-Gateway-Mode": config.mode
+  });
   response.end(body);
 }
 
