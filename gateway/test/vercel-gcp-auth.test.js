@@ -45,8 +45,8 @@ test("OIDC completo monta IdentityPoolClient sem segredo permanente", async () =
   const authClient = await createVercelGcpAuthClient({
     env: COMPLETE_ENV,
     oidcLoader: async () => ({
-      async getVercelOidcToken() {
-        supplied.push("token-requested");
+      async getVercelOidcToken(options) {
+        supplied.push(options);
         return "TOKEN-FICTICIO-DE-TESTE";
       }
     }),
@@ -71,7 +71,9 @@ test("OIDC completo monta IdentityPoolClient sem segredo permanente", async () =
     "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/painel@example.iam.gserviceaccount.com:generateAccessToken"
   );
   assert.equal(await configs[0].subject_token_supplier.getSubjectToken(), "TOKEN-FICTICIO-DE-TESTE");
-  assert.equal(supplied.length, 1);
+  assert.deepEqual(supplied, [{
+    audience: "https://iam.googleapis.com/projects/123456789/locations/global/workloadIdentityPools/vercel-pool/providers/vercel-provider"
+  }]);
 });
 
 test("audience usa somente identificadores GCP", () => {
