@@ -5,6 +5,7 @@ const assert = require("node:assert/strict");
 
 const {
   parameterTypes,
+  normalizeMaximumBytesBilled,
   createGoogleBigQueryExecutor
 } = require("../src/providers/google-bigquery-executor");
 
@@ -68,7 +69,9 @@ test("executor BigQuery usa query parametrizada e identidade do runtime", async 
   assert.deepEqual(rows, [{ route_name: "C2_AM1" }]);
   assert.equal(calls.length, 1);
   assert.equal(calls[0].useLegacySql, false);
+  assert.equal(calls[0].useQueryCache, false);
   assert.equal(calls[0].location, "US");
+  assert.equal(calls[0].maximumBytesBilled, "10737418240");
   assert.deepEqual(calls[0].types, {
     facility_id: "STRING",
     operation_date: "DATE",
@@ -127,4 +130,39 @@ test("executor BigQuery converte falha do SDK em erro seguro", async () => {
       return true;
     }
   );
+});
+
+
+test("executor BigQuery valida limite maximo de bytes faturados", () => {
+  assert.equal(normalizeMaximumBytesBilled("10737418240"), "10737418240");
+  assert.equal(normalizeMaximumBytesBilled(""), "");
+
+  assert.throws(
+    () => normalizeMaximumBytesBilled("0"),
+    error => error.code === "INVALID_CONFIGURATION"
+  );
+  assert.throws(
+    () => normalizeMaximumBytesBilled("abc"),
+    error => error.code === "INVALID_CONFIGURATION"
+  );
+});
+
+test("executor BigQuery aceita limite customizado", async () => {
+  const calls = [];
+
+  class FakeBigQuery {
+    async query(options) {
+      calls.push(options);
+      return [[]];
+    }
+  }
+
+  const execute = createGoogleBigQueryExecutor({
+    BigQueryClass: FakeBigQuery,
+    maximumBytesBilled: "5368709120"
+  });
+
+  await execute({ sql: "SELECT 1", params: {} });
+
+  assert.equal(calls[0].maximumBytesBilled, "5368709120");
 });
