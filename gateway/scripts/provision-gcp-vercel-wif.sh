@@ -6,9 +6,9 @@ SA_ID="${SA_ID:-painel-docas-am1-gateway}"
 POOL_ID="${POOL_ID:-vercel-painel-docas}"
 PROVIDER_ID="${PROVIDER_ID:-vercel-production}"
 VERCEL_OWNER="${VERCEL_OWNER:-muriloliloos-projetos}"
-VERCEL_OWNER_ID="${VERCEL_OWNER_ID:-team_ENAcCP8nd68Roe20KC5E2j2t}"
 VERCEL_PROJECT="${VERCEL_PROJECT:-painel-docas-am1-gateway}"
 VERCEL_ENVIRONMENT="${VERCEL_ENVIRONMENT:-production}"
+VERCEL_SUBJECT="owner:${VERCEL_OWNER}:project:${VERCEL_PROJECT}:environment:${VERCEL_ENVIRONMENT}"
 
 echo "== Painel Docas AM1 / GCP Workload Identity =="
 echo "Projeto: $PROJECT_ID"
@@ -92,18 +92,17 @@ if ! gcloud iam workload-identity-pools providers describe "$PROVIDER_ID" \
     --workload-identity-pool="$POOL_ID" \
     --display-name="Vercel production Painel Docas" \
     --issuer-uri="https://oidc.vercel.com" \
-    --allowed-audiences="https://vercel.com/${VERCEL_OWNER}" \
-    --attribute-mapping="google.subject=assertion.sub,attribute.owner_id=assertion.owner_id,attribute.project=assertion.project,attribute.project_id=assertion.project_id,attribute.environment=assertion.environment" \
-    --attribute-condition="assertion.owner_id == '${VERCEL_OWNER_ID}' && assertion.project == '${VERCEL_PROJECT}' && assertion.environment == '${VERCEL_ENVIRONMENT}'"
+    --attribute-mapping="google.subject=assertion.sub" \
+    --attribute-condition="assertion.sub == '${VERCEL_SUBJECT}'"
 fi
 
 echo "Concedendo impersonacao somente ao projeto Vercel aprovado..."
-PRINCIPAL_SET="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${POOL_ID}/attribute.project/${VERCEL_PROJECT}"
+PRINCIPAL="principal://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${POOL_ID}/subject/${VERCEL_SUBJECT}"
 
 gcloud iam service-accounts add-iam-policy-binding "$SA_EMAIL" \
   --project="$PROJECT_ID" \
   --role="roles/iam.workloadIdentityUser" \
-  --member="$PRINCIPAL_SET" \
+  --member="$PRINCIPAL" \
   --quiet >/dev/null
 
 echo
@@ -119,3 +118,4 @@ echo "BIGQUERY_LOCATION=US"
 echo
 echo "Nenhuma chave JSON foi criada."
 echo "A Service Account possui jobUser no projeto e dataViewer somente nas 8 tabelas listadas."
+echo "OIDC restrito ao subject: $VERCEL_SUBJECT"
