@@ -192,10 +192,8 @@ test("G12 CORS rejeita origem nao autorizada", async () => {
   assert.equal(response.status, 403);
   assert.equal(body.error.code, "ORIGIN_NOT_ALLOWED");
   assert.equal(response.headers.get("access-control-allow-origin"), null);
-  assert.throws(
-    () => createConfig({ NODE_ENV: "production", GATEWAY_MODE: "mock" }),
-    /PANEL_ALLOWED_ORIGIN/
-  );
+  const cloudMock = createConfig({ NODE_ENV: "production", GATEWAY_MODE: "mock" });
+  assert.deepEqual([...cloudMock.allowedOrigins], ["https://muriloliloo.github.io"]);
   assert.throws(
     () => createConfig({ NODE_ENV: "production", GATEWAY_MODE: "mock", PANEL_ALLOWED_ORIGIN: "*" }),
     /curinga/
@@ -1479,14 +1477,12 @@ test("A16 groupId fica restrito a allowlist do gateway", async () => {
   assert.equal(denied.body.error.code, "INVALID_QUERY");
   assert.match(denied.body.error.message, /groupId nao autorizado/);
 
-  assert.throws(
-    () => createConfig({
-      NODE_ENV: "production",
-      GATEWAY_MODE: "mock",
-      PANEL_ALLOWED_ORIGIN: "https://painel.example"
-    }),
-    /ALLOWED_GROUP_IDS/
-  );
+  const cloudMock = createConfig({
+    NODE_ENV: "production",
+    GATEWAY_MODE: "mock",
+    PANEL_ALLOWED_ORIGIN: "https://painel.example"
+  });
+  assert.deepEqual([...cloudMock.allowedGroupIds], ["TESTE"]);
 });
 
 test("A17 configuracao publica usa homologacao segura e sem segredo", () => {
