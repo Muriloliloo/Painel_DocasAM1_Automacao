@@ -33,6 +33,7 @@ jobs:
           cp app.js _site/
           cp automation-config.js _site/
           cp closure-status.js _site/
+          cp html2canvas.min.js _site/
           cp firebase-config.js _site/
           cp ondas-dados.js _site/
           cp .nojekyll _site/
