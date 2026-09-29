@@ -21,7 +21,7 @@ O diretorio `gateway/` possui `Dockerfile` baseado em Node 22. A imagem nao cont
 
 ## CORS
 
-`PANEL_ALLOWED_ORIGIN` deve conter a origem exata do painel, sem caminho e sem curinga. Se o painel continuar no GitHub Pages, configure a origem HTTPS exata correspondente ao site publicado. Nao use `Access-Control-Allow-Origin: *`.
+`PANEL_ALLOWED_ORIGIN` deve conter a origem exata do painel, sem caminho e sem curinga. Para o GitHub Pages deste repositorio, use `https://muriloliloo.github.io`. O caminho `/Painel_DocasAM1_Automacao/` nao faz parte da origem CORS. Nao use `Access-Control-Allow-Origin: *`.
 
 ## Configuracao de producao
 
