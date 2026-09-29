@@ -222,7 +222,7 @@ function validateOperationalQuery(searchParams, config, endpoint) {
   return { facilityId, siteId, groupId, cycle, timezone, scenario, waves };
 }
 
-function createGatewayServer(config = createConfig(), dependencies = {}) {
+function createGatewayHandler(config = createConfig(), dependencies = {}) {
   let mockSequenceIndex = 0;
 
   const resolveMockSequence = (query, pathname) => {
@@ -253,7 +253,7 @@ function createGatewayServer(config = createConfig(), dependencies = {}) {
     ymsProvider: dependencies.ymsProvider || createYmsProvider(config)
   });
 
-  return http.createServer(async (request, response) => {
+  return async (request, response) => {
     let pathname = "";
     try {
       rejectSensitiveRequestHeaders(request);
@@ -361,7 +361,11 @@ function createGatewayServer(config = createConfig(), dependencies = {}) {
       if (!response.headersSent) sendError(response, error, config, pathname);
       else response.destroy();
     }
-  });
+  };
+}
+
+function createGatewayServer(config = createConfig(), dependencies = {}) {
+  return http.createServer(createGatewayHandler(config, dependencies));
 }
 
 if (require.main === module) {
@@ -382,6 +386,7 @@ module.exports = {
   MOCK_SCENARIOS,
   MOCK_OPERATIONAL_SEQUENCE,
   MOCK_RECOVERY_SEQUENCE,
+  createGatewayHandler,
   createGatewayServer,
   validateRequestTarget,
   validateOperationalQuery
