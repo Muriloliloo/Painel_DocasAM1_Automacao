@@ -13,7 +13,7 @@ const {
 } = require("./yms-operational-bridge");
 const { GatewayError } = require("../errors");
 
-async function withinTimeout(config, operation) {
+async function withinTimeout(config, operation, timeoutMs = config.upstreamTimeoutMs) {
   const controller = new AbortController();
   let timer;
 
@@ -24,7 +24,7 @@ async function withinTimeout(config, operation) {
         timer = setTimeout(() => {
           controller.abort();
           reject(new GatewayError(504, "UPSTREAM_TIMEOUT", "Tempo limite das fontes internas excedido."));
-        }, config.upstreamTimeoutMs);
+        }, timeoutMs);
       })
     ]);
   } finally {
@@ -50,6 +50,13 @@ async function acquireSources({
   timezone,
   dependencies = {}
 }) {
+  const timeoutMs = config.snapshotSourceMode === "yms-primary"
+    ? config.ymsTimeoutMs
+    : Math.max(
+        config.upstreamTimeoutMs,
+        config.ymsMode !== "disabled" ? config.ymsTimeoutMs : 0
+      );
+
   return withinTimeout(config, signal => {
     if (config.snapshotSourceMode === "yms-primary") {
       return Promise.allSettled([
@@ -102,7 +109,7 @@ async function acquireSources({
     }
 
     return Promise.allSettled(tasks).then(results => ({ names, results }));
-  });
+  }, timeoutMs);
 }
 
 async function buildSnapshot(options) {
@@ -246,7 +253,7 @@ async function buildYmsSnapshot({
     timezone,
     signal,
     ...dependencies
-  }));
+  }), config.ymsTimeoutMs);
 
   const yms = rows.map(sanitizeYms);
 
