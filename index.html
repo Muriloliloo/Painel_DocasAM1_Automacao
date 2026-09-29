@@ -324,6 +324,67 @@
       to { transform: rotate(360deg); }
     }
 
+    .automation-status-badge {
+      min-width: 126px;
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 4px 10px;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 5px;
+      background: linear-gradient(180deg, #5d6670, #343b43);
+      color: #fff;
+      font: 950 10px/1.05 "Segoe UI", Arial, sans-serif;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .automation-status-badge > i {
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    .automation-status-badge > span {
+      display: grid;
+      gap: 1px;
+      text-align: left;
+    }
+
+    .automation-status-badge strong {
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .automation-status-badge small {
+      color: #dce7ef;
+      font-size: 8px;
+      line-height: 1;
+      text-transform: none;
+      font-weight: 800;
+    }
+
+    .automation-status-badge.is-auto {
+      background: linear-gradient(180deg, #15a861, #087241);
+      border-color: #43df96;
+    }
+
+    .automation-status-badge.is-loading {
+      background: linear-gradient(180deg, #1a79b8, #07517e);
+      border-color: #6ac7ff;
+    }
+
+    .automation-status-badge.is-error {
+      background: linear-gradient(180deg, #e62942, #a9001b);
+      border-color: #ff7082;
+    }
+
+    .automation-status-badge.is-stale {
+      background: linear-gradient(180deg, #d18a10, #8a5800);
+      border-color: #ffd66a;
+    }
+
     .auth-badge {
       min-width: 66px;
       min-height: 32px;
@@ -10528,7 +10589,11 @@ body.editor-open .global-theme-toggle {
           <i class="bi bi-arrow-clockwise" aria-hidden="true"></i><span class="sync-refresh-label">Atualizar</span>
         </button>
         <span class="sync-refresh-status" id="syncRefreshStatus" role="status" aria-live="polite"></span>
-        <button id="authBtn" class="auth-badge" type="button"><span>Firebase</span><strong>Local</strong></button>
+        <span id="automationStatusBadge" class="automation-status-badge is-manual" role="status" aria-live="polite" title="Contingência local ativa">
+          <i class="bi bi-person-workspace" aria-hidden="true"></i>
+          <span><strong>CONTINGÊNCIA</strong><small>Local</small></span>
+        </span>
+        <button id="authBtn" class="auth-badge" type="button" hidden aria-hidden="true"><span>Firebase</span><strong>Desativado</strong></button>
         <button id="testTimerBtn" class="test-mode admin-only" type="button">Teste</button>
         <button id="toggleTimersBtn" class="timer-toggle" type="button" hidden aria-hidden="true">Cronômetro</button>
         <button id="editBtn" class="admin-only" type="button">Editar dados</button>
@@ -11146,7 +11211,6 @@ body.editor-open .global-theme-toggle {
     </div>
   </div>
 
-  <script src="firebase-config.js"></script>
   <script src="ondas-dados.js"></script>
   <script>
     const storageKey = "ondas-dados";
@@ -11365,7 +11429,13 @@ data.baseDiagnosticHistory = [];
     ];
     const allowedWaves = ["Onda 1", "Onda 2", "Onda 3", "Onda 4", "Onda 5"];
 
+    function automationStandaloneMode() {
+      return window.PAINEL_AUTOMATION_STANDALONE === true
+        || window.PAINEL_RUNTIME_MODE === "automation";
+    }
+
     function firebaseConfigured() {
+      if (automationStandaloneMode()) return false;
       const config = window.FIREBASE_APP_CONFIG || {};
       return Boolean(window.FIREBASE_ENABLED)
         && config.apiKey
@@ -11375,22 +11445,50 @@ data.baseDiagnosticHistory = [];
     }
 
     function isAdmin() {
-      return Boolean(cloudState.enabled && cloudState.user && cloudState.role === "admin");
+      return Boolean(!automationStandaloneMode()
+        && cloudState.enabled
+        && cloudState.user
+        && cloudState.role === "admin");
     }
 
     function canEditData() {
-      return isAdmin();
+      return automationStandaloneMode() || isAdmin();
     }
 
     function roleLabel() {
+      if (automationStandaloneMode()) return "Contingência";
       return isAdmin() ? "Admin" : "Leitor";
     }
 
     function updateAuthBadge() {
       const button = document.getElementById("authBtn");
+
+      if (automationStandaloneMode()) {
+        if (button) {
+          button.hidden = true;
+          button.setAttribute("aria-hidden", "true");
+        }
+        document.querySelector(".app")?.classList.remove("reader-mode");
+        document.querySelectorAll(".admin-only").forEach(element => {
+          element.disabled = false;
+        });
+        const loginButton = document.getElementById("loginBtn");
+        const logoutButton = document.getElementById("logoutBtn");
+        const sessionStatus = document.getElementById("loginSessionStatus");
+        if (loginButton) loginButton.hidden = true;
+        if (logoutButton) logoutButton.hidden = true;
+        if (sessionStatus) {
+          sessionStatus.textContent = "";
+          sessionStatus.classList.remove("visible");
+        }
+        return;
+      }
+
       if (!button) return;
       const admin = isAdmin();
       const top = admin ? (cloudState.user?.email || "Administrador") : "Acesso ao painel";
+      button.hidden = false;
+      button.removeAttribute("aria-hidden");
       button.title = admin ? top : "Modo leitor — clique para acesso administrativo";
       button.innerHTML = `<span>${admin ? top : "Painel"}</span><strong>${roleLabel()}</strong>`;
       document.querySelector(".app")?.classList.toggle("reader-mode", !admin);
@@ -14034,9 +14132,63 @@ function automaticConnectionStatus() {
   };
 }
 
+function automaticStatusTimeLabel(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}
+
+function renderAutomaticStatusBadge(status = automaticConnectionStatus()) {
+  const badge = document.getElementById("automationStatusBadge");
+  if (!badge) return;
+
+  let tone = "is-manual";
+  let icon = "bi-person-workspace";
+  let title = "CONTINGÊNCIA";
+  let detail = "Local";
+
+  if (status.configured) {
+    if (status.lastError) {
+      tone = "is-error";
+      icon = "bi-exclamation-triangle-fill";
+      title = "ERRO";
+      detail = "Automação";
+    } else if (status.inFlight || (status.running && !status.lastSuccessAt)) {
+      tone = "is-loading";
+      icon = "bi-arrow-repeat";
+      title = "CONECTANDO";
+      detail = "Gateway";
+    } else if (status.lastSuccessAt) {
+      const elapsedMs = Date.now() - new Date(status.lastSuccessAt).getTime();
+      const intervalMs = Number(automaticSourceState.config?.intervalMs || AUTOMATIC_DEFAULT_INTERVAL_MS);
+      const stale = Number.isFinite(elapsedMs) && elapsedMs > Math.max(intervalMs * 3, 90000);
+      tone = stale ? "is-stale" : "is-auto";
+      icon = stale ? "bi-clock-history" : "bi-lightning-charge-fill";
+      title = stale ? "DESATUALIZADO" : "AUTOMÁTICO";
+      detail = automaticStatusTimeLabel(status.lastSuccessAt) || "Online";
+    } else {
+      tone = "is-loading";
+      icon = "bi-arrow-repeat";
+      title = status.running ? "CONECTANDO" : "PRONTO";
+      detail = status.running ? "Gateway" : "Pausado";
+    }
+  }
+
+  badge.className = `automation-status-badge ${tone}`;
+  badge.innerHTML = `<i class="bi ${icon}" aria-hidden="true"></i><span><strong>${title}</strong><small>${detail}</small></span>`;
+  badge.title = status.lastError
+    ? `Automação com erro: ${status.lastError}`
+    : status.configured
+      ? `Automação configurada. Último sucesso: ${automaticStatusTimeLabel(status.lastSuccessAt) || "aguardando"}`
+      : "Gateway ainda não configurado. Editor local disponível como contingência.";
+}
+
 function emitAutomaticConnectionStatus() {
+  const status = automaticConnectionStatus();
+  renderAutomaticStatusBadge(status);
   window.dispatchEvent(new CustomEvent("painel:automatic-status", {
-    detail: automaticConnectionStatus()
+    detail: status
   }));
 }
 
@@ -14752,7 +14904,7 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
 
     function saveData(options = {}) {
       normalizeJustificationStore();
-      const localOnly = Boolean(options.localOnly);
+      const localOnly = automationStandaloneMode() || Boolean(options.localOnly);
       const advanceRevision = options.advanceRevision !== false;
       if (!cloudState.applyingRemote && advanceRevision) {
         data.syncRevision = nextSyncRevision();
@@ -18166,6 +18318,44 @@ data.baseDiagnosticHistory = localDiagnosticHistory;
       }
     }
 
+    async function refreshPanelSmart() {
+      if (!automationStandaloneMode()) return refreshPanelFromCloud();
+
+      if (!automaticSourceState.config) {
+        setRefreshSyncState("error", "Automação aguardando gateway. Contingência local ativa.");
+        renderAutomaticStatusBadge();
+        resetRefreshSyncState(3600);
+        return false;
+      }
+
+      setRefreshSyncState("loading", "Atualizando fonte automática...");
+      try {
+        const result = await refreshAutomaticSnapshot({ source: "manual" });
+        if (result?.skipped && result.reason !== "in-flight") {
+          throw new Error(`Atualização automática ignorada: ${result.reason || "sem motivo"}.`);
+        }
+        const time = new Date().toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        });
+        const counts = automaticSourceState.lastCounts || {};
+        setRefreshSyncState(
+          "success",
+          `Automação atualizada às ${time} · Op ${counts.operacional || 0} · Aduana ${counts.aduana || 0} · YMS ${counts.yms || 0}`
+        );
+        renderAutomaticStatusBadge();
+        resetRefreshSyncState();
+        return true;
+      } catch (error) {
+        console.warn("Atualização automática manual falhou:", error);
+        setRefreshSyncState("error", error?.message || "Falha ao atualizar a automação.");
+        renderAutomaticStatusBadge();
+        resetRefreshSyncState(4200);
+        return false;
+      }
+    }
+
     function subscribePanel() {
       if (cloudState.unsubscribe) cloudState.unsubscribe();
       cloudState.unsubscribe = cloudState.tools.onSnapshot(cloudState.docRef, snapshot => {
@@ -18180,6 +18370,13 @@ data.baseDiagnosticHistory = localDiagnosticHistory;
     }
 
     async function initializeFirebase() {
+      if (automationStandaloneMode()) {
+        cloudState.enabled = false;
+        cloudState.ready = false;
+        cloudState.authResolved = true;
+        updateAuthBadge();
+        return;
+      }
       cloudState.enabled = firebaseConfigured();
       if (cloudState.enabled) cloudState.role = "leitor";
       updateAuthBadge();
@@ -18295,7 +18492,7 @@ data.baseDiagnosticHistory = localDiagnosticHistory;
        * tenha clicado sem querer em uma linha anterior.
        */
       textarea.addEventListener("paste", event => {
-        if (!isAdmin()) return;
+        if (!canEditData()) return;
 
         event.preventDefault();
 
@@ -18338,8 +18535,9 @@ data.baseDiagnosticHistory = localDiagnosticHistory;
     prepareContinuousPaste(document.getElementById("aduanaPaste"));
 
     document.getElementById("editBtn").addEventListener("click", openDrawer);
-    document.getElementById("refreshSyncBtn").addEventListener("click", refreshPanelFromCloud);
+    document.getElementById("refreshSyncBtn").addEventListener("click", refreshPanelSmart);
     document.getElementById("authBtn").addEventListener("click", () => {
+      if (automationStandaloneMode()) return;
       document.getElementById("loginModal").classList.add("open");
     });
     document.getElementById("closeLoginBtn").addEventListener("click", () => {
@@ -18621,6 +18819,7 @@ data.baseAduanaManual = mergeLatestBaseRows(
     rebuildConsolidatedBase(data.extracao || []);
     render();
     initializeAutomaticSource();
+    renderAutomaticStatusBadge();
     initializeFirebase();
     setInterval(() => {
       document.getElementById("footerUpdate").textContent = `${data.data || ""} ${currentTimeLabel()}`.trim();
