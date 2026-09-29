@@ -1,11 +1,12 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "rewrites": [
-    { "source": "/health", "destination": "/api/index" },
-    { "source": "/ready", "destination": "/api/index" },
-    { "source": "/snapshot", "destination": "/api/index" },
-    { "source": "/dispatch", "destination": "/api/index" },
-    { "source": "/customs", "destination": "/api/index" },
-    { "source": "/yms", "destination": "/api/index" }
+    { "source": "/health", "destination": "/api/health" },
+    { "source": "/ready", "destination": "/api/ready" },
+    { "source": "/snapshot", "destination": "/api/snapshot" },
+    { "source": "/dispatch", "destination": "/api/dispatch" },
+    { "source": "/customs", "destination": "/api/customs" },
+    { "source": "/yms", "destination": "/api/yms" }
   ]
 }
