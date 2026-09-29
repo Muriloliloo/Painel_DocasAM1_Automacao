@@ -184,6 +184,37 @@ function validateScenario(searchParams, config) {
   return scenario;
 }
 
+function dateStampInTimeZone(timezone, now = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(now);
+
+  const values = Object.fromEntries(
+    parts.filter(part => part.type !== "literal").map(part => [part.type, part.value])
+  );
+  return `${values.year}${values.month}${values.day}`;
+}
+
+function deriveOperationalGroupId({ facilityId, cycle, timezone, now = new Date() }) {
+  return `${facilityId}_${dateStampInTimeZone(timezone, now)}_${cycle}_0`;
+}
+
+function validateGroupId(searchParams, config, { facilityId, cycle, timezone }) {
+  const derived = deriveOperationalGroupId({ facilityId, cycle, timezone });
+  const value = searchParams.has("groupId") ? searchParams.get("groupId") : derived;
+
+  if (!value || value.length > 40) {
+    throw new GatewayError(400, "INVALID_QUERY", "groupId nao autorizado.");
+  }
+
+  if (config.allowedGroupIds.has(value) || value === derived) return value;
+
+  throw new GatewayError(400, "INVALID_QUERY", "groupId nao autorizado.");
+}
+
 function validateOperationalQuery(searchParams, config, endpoint) {
   const extraKeys = endpoint === "/snapshot" || endpoint === "/yms"
     ? ["waves"]
@@ -195,14 +226,8 @@ function validateOperationalQuery(searchParams, config, endpoint) {
   const facilityId = configuredValue(searchParams, "facilityId", config.allowedFacilityIds, [...config.allowedFacilityIds][0], 32);
   const siteId = configuredValue(searchParams, "siteId", config.allowedSiteIds, [...config.allowedSiteIds][0], 16);
   const cycle = configuredValue(searchParams, "cycle", config.allowedCycles, [...config.allowedCycles][0], 16);
-  const groupId = configuredValue(
-    searchParams,
-    "groupId",
-    config.allowedGroupIds,
-    [...config.allowedGroupIds][0],
-    40
-  );
   const timezone = validateTimezone(searchParams.get("timezone") || "America/Sao_Paulo");
+  const groupId = validateGroupId(searchParams, config, { facilityId, cycle, timezone });
   const scenario = validateScenario(searchParams, config);
 
   let waves = [...config.allowedWaves];
@@ -393,5 +418,7 @@ module.exports = {
   createGatewayHandler,
   createGatewayServer,
   validateRequestTarget,
-  validateOperationalQuery
+  validateOperationalQuery,
+  deriveOperationalGroupId,
+  dateStampInTimeZone
 };
