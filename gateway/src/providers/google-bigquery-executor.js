@@ -30,14 +30,32 @@ function parameterTypes(params = {}) {
   return types;
 }
 
+function normalizeMaximumBytesBilled(value) {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "";
+
+  const parsed = Number(raw);
+  if (!Number.isSafeInteger(parsed) || parsed <= 0) {
+    throw new GatewayError(
+      500,
+      "INVALID_CONFIGURATION",
+      "BIGQUERY_MAXIMUM_BYTES_BILLED deve ser um inteiro positivo."
+    );
+  }
+
+  return String(parsed);
+}
+
 function createGoogleBigQueryExecutor({
   BigQueryClass,
   projectId = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCLOUD_PROJECT || "",
   location = process.env.BIGQUERY_LOCATION || "",
+  maximumBytesBilled = process.env.BIGQUERY_MAXIMUM_BYTES_BILLED || "10737418240",
   authClient,
   authClientFactory
 } = {}) {
   const Client = BigQueryClass || loadBigQueryClass();
+  const maxBytes = normalizeMaximumBytesBilled(maximumBytesBilled);
   let bigqueryPromise;
 
   async function getClient() {
@@ -69,10 +87,12 @@ function createGoogleBigQueryExecutor({
       query: sql,
       params,
       types: parameterTypes(params),
-      useLegacySql: false
+      useLegacySql: false,
+      useQueryCache: false
     };
 
     if (location) options.location = location;
+    if (maxBytes) options.maximumBytesBilled = maxBytes;
 
     let rows;
     try {
@@ -100,5 +120,6 @@ function createGoogleBigQueryExecutor({
 
 module.exports = {
   parameterTypes,
+  normalizeMaximumBytesBilled,
   createGoogleBigQueryExecutor
 };
