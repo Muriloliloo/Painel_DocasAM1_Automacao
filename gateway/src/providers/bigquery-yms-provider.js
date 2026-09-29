@@ -63,43 +63,75 @@ function dateValue(value) {
   return value;
 }
 
-function createBigQueryYmsProvider({ queryExecutor, sqlLoader = loadRuntimeSql } = {}) {
+function createBigQueryYmsProvider({
+  queryExecutor,
+  sqlLoader = loadRuntimeSql,
+  queryCacheMs = 45 * 1000,
+  now = () => Date.now()
+} = {}) {
   const configured = typeof queryExecutor === "function";
   const operationDateCache = new Map();
+  const operationDateInFlight = new Map();
+  const queryCache = new Map();
+  const queryInFlight = new Map();
 
-  async function resolveOperationDate({ facilityId, cycle, waves, referenceDate, signal }) {
+  if (!Number.isSafeInteger(queryCacheMs) || queryCacheMs <= 0 || queryCacheMs > 5 * 60 * 1000) {
+    throw new GatewayError(
+      500,
+      "INVALID_CONFIGURATION",
+      "YMS_QUERY_CACHE_MS deve ficar entre 1 e 300000 ms."
+    );
+  }
+
+  function cloneRows(rows) {
+    return Array.isArray(rows) ? rows.map(row => ({ ...row })) : rows;
+  }
+
+  async function resolveOperationDate({ facilityId, cycle, waves, referenceDate }) {
     const cacheKey = [facilityId, cycle, referenceDate, waves.join(",")].join("|");
     const cached = operationDateCache.get(cacheKey);
-    if (cached && Date.now() - cached.cachedAt < OPERATION_DATE_CACHE_MS) {
+    if (cached && now() - cached.cachedAt < OPERATION_DATE_CACHE_MS) {
       return cached.operationDate;
     }
 
-    const rows = await queryExecutor({
-      sql: OPERATION_DATE_SQL,
-      params: {
-        facility_id: String(facilityId),
-        cycle_name: String(cycle),
-        reference_date: referenceDate,
-        wave_numbers: waves
-      },
-      signal
-    });
-
-    const resolved = dateValue(Array.isArray(rows) ? rows[0]?.operation_date : null);
-    if (!resolved) {
-      throw new GatewayError(
-        503,
-        "YMS_OPERATION_DATE_NOT_FOUND",
-        "Nenhum ciclo YMS encontrado entre a data de referencia e D-1."
-      );
+    if (operationDateInFlight.has(cacheKey)) {
+      return operationDateInFlight.get(cacheKey);
     }
 
-    const resolvedDate = validateOperationDate(resolved);
-    operationDateCache.set(cacheKey, {
-      operationDate: resolvedDate,
-      cachedAt: Date.now()
-    });
-    return resolvedDate;
+    const pending = (async () => {
+      const rows = await queryExecutor({
+        sql: OPERATION_DATE_SQL,
+        params: {
+          facility_id: String(facilityId),
+          cycle_name: String(cycle),
+          reference_date: referenceDate,
+          wave_numbers: waves
+        }
+      });
+
+      const resolved = dateValue(Array.isArray(rows) ? rows[0]?.operation_date : null);
+      if (!resolved) {
+        throw new GatewayError(
+          503,
+          "YMS_OPERATION_DATE_NOT_FOUND",
+          "Nenhum ciclo YMS encontrado entre a data de referencia e D-1."
+        );
+      }
+
+      const resolvedDate = validateOperationDate(resolved);
+      operationDateCache.set(cacheKey, {
+        operationDate: resolvedDate,
+        cachedAt: now()
+      });
+      return resolvedDate;
+    })();
+
+    operationDateInFlight.set(cacheKey, pending);
+    try {
+      return await pending;
+    } finally {
+      operationDateInFlight.delete(cacheKey);
+    }
   }
 
   return Object.freeze({
@@ -137,20 +169,57 @@ function createBigQueryYmsProvider({ queryExecutor, sqlLoader = loadRuntimeSql }
             facilityId,
             cycle,
             waves: waveNumbers,
-            referenceDate: currentDateInTimeZone(timezone),
-            signal
+            referenceDate: currentDateInTimeZone(timezone)
           });
 
-      return queryExecutor({
-        sql,
-        params: {
-          facility_id: String(facilityId),
-          cycle_name: String(cycle),
-          operation_date: resolvedOperationDate,
-          wave_numbers: waveNumbers
-        },
-        signal
-      });
+      const cacheKey = [
+        String(facilityId),
+        String(cycle),
+        resolvedOperationDate,
+        waveNumbers.join(",")
+      ].join("|");
+
+      const cached = queryCache.get(cacheKey);
+      if (cached && now() - cached.cachedAt < queryCacheMs) {
+        return cloneRows(cached.rows);
+      }
+
+      if (queryInFlight.has(cacheKey)) {
+        return cloneRows(await queryInFlight.get(cacheKey));
+      }
+
+      const pending = (async () => {
+        const rows = await queryExecutor({
+          sql,
+          params: {
+            facility_id: String(facilityId),
+            cycle_name: String(cycle),
+            operation_date: resolvedOperationDate,
+            wave_numbers: waveNumbers
+          }
+        });
+
+        if (!Array.isArray(rows)) {
+          throw new GatewayError(
+            502,
+            "YMS_INVALID_RESPONSE",
+            "Resposta YMS/BigQuery invalida."
+          );
+        }
+
+        queryCache.set(cacheKey, {
+          rows: cloneRows(rows),
+          cachedAt: now()
+        });
+        return rows;
+      })();
+
+      queryInFlight.set(cacheKey, pending);
+      try {
+        return cloneRows(await pending);
+      } finally {
+        queryInFlight.delete(cacheKey);
+      }
     }
   });
 }
