@@ -11279,6 +11279,8 @@ data.baseDiagnosticHistory = [];
     }
     let currentWave = data.ondas[0] || "Onda 1";
     let historySelectedWave = currentWave;
+    let manualWaveSelectionUntil = 0;
+    const AUTO_WAVE_MANUAL_HOLD_MS = 10 * 60 * 1000;
     let currentView = "docas";
     let dockDisplayMode = "overview";
     let alertToastTimer = null;
@@ -11627,6 +11629,58 @@ data.baseDiagnosticHistory = [];
     function minutesFromTime(text) {
       const [hour, minute] = String(text || "").split(":").map(Number);
       return Number.isFinite(hour) && Number.isFinite(minute) ? hour * 60 + minute : null;
+    }
+
+    function operationClockMinutes(date = new Date()) {
+      try {
+        const parts = new Intl.DateTimeFormat("en-GB", {
+          timeZone: "America/Sao_Paulo",
+          hour: "2-digit",
+          minute: "2-digit",
+          hourCycle: "h23"
+        }).formatToParts(date);
+        const hour = Number(parts.find(part => part.type === "hour")?.value);
+        const minute = Number(parts.find(part => part.type === "minute")?.value);
+        if (Number.isFinite(hour) && Number.isFinite(minute)) return hour * 60 + minute;
+      } catch {}
+      return date.getHours() * 60 + date.getMinutes();
+    }
+
+    function automaticWaveForNow(date = new Date()) {
+      const scheduled = (data.ondas || [])
+        .map(wave => ({
+          wave,
+          start: minutesFromTime(parseWaveTime(wave)?.inicio)
+        }))
+        .filter(item => item.start !== null)
+        .sort((a, b) => a.start - b.start);
+
+      if (!scheduled.length) return currentWave;
+      const nowMinutes = operationClockMinutes(date);
+      let candidate = scheduled[0].wave;
+      scheduled.forEach(item => {
+        if (nowMinutes >= item.start) candidate = item.wave;
+      });
+      return candidate;
+    }
+
+    function holdAutomaticWaveForManualSelection() {
+      manualWaveSelectionUntil = Date.now() + AUTO_WAVE_MANUAL_HOLD_MS;
+    }
+
+    function syncAutomaticWave(options = {}) {
+      if (!automationStandaloneMode()) return false;
+      const force = options.force === true;
+      const shouldRender = options.render !== false;
+      if (!force && Date.now() < manualWaveSelectionUntil) return false;
+
+      const targetWave = automaticWaveForNow();
+      if (!targetWave || waveLabel(targetWave) === waveLabel(currentWave)) return false;
+
+      currentWave = targetWave;
+      historySelectedWave = targetWave;
+      if (shouldRender) render();
+      return true;
     }
 
     function remainingWaveTime(value) {
@@ -15074,6 +15128,7 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
         const selectedWave = waves[index];
         if (!selectedWave) return;
         currentWave = selectedWave;
+        holdAutomaticWaveForManualSelection();
         closeMenu();
         render();
       };
@@ -18600,6 +18655,7 @@ data.baseDiagnosticHistory = localDiagnosticHistory;
       const wave = event.target.value;
       if (!wave) return;
       currentWave = wave;
+      holdAutomaticWaveForManualSelection();
       render();
     };
     document.getElementById("simpleWaveSelect")?.addEventListener("change", changeOperationalWave);
@@ -18655,6 +18711,7 @@ data.baseDiagnosticHistory = localDiagnosticHistory;
       if (!wave) return;
       historySelectedWave = wave;
       currentWave = wave;
+      holdAutomaticWaveForManualSelection();
       render();
       const routes = allHistoryRoutes(historySelectedWave);
       if (routes[0]) renderRouteHistory(routes[0]);
@@ -18817,12 +18874,15 @@ data.baseAduanaManual = mergeLatestBaseRows(
     });
 
     rebuildConsolidatedBase(data.extracao || []);
+    syncAutomaticWave({ force: true, render: false });
     render();
     initializeAutomaticSource();
     renderAutomaticStatusBadge();
     initializeFirebase();
     setInterval(() => {
       document.getElementById("footerUpdate").textContent = `${data.data || ""} ${currentTimeLabel()}`.trim();
+      renderAutomaticStatusBadge();
+      syncAutomaticWave();
       renderStats();
       if (currentView === "docas" && dockDisplayMode === "simple") renderSimpleDocksMetrics();
       else if (currentView === "docas") renderGrid();
