@@ -1,0 +1,52 @@
+CONFIGURAR FIREBASE NO CONTROLE DE DOCAS AM1
+
+1. Acesse https://console.firebase.google.com
+2. Crie um projeto.
+3. Entre em Authentication > Sign-in method.
+4. Ative Email/Senha.
+5. Crie os usuários que vão acessar o painel.
+6. Entre em Firestore Database.
+7. Crie o banco em modo produção.
+8. Copie as credenciais do app web do Firebase.
+9. Abra o arquivo firebase-config.js.
+10. Troque COLE_AQUI pelas credenciais do Firebase.
+11. Mude:
+
+window.FIREBASE_ENABLED = true;
+
+12. Em FIREBASE_ADMIN_EMAILS, coloque os e-mails dos administradores.
+
+Exemplo:
+
+window.FIREBASE_ADMIN_EMAILS = [
+  "gestor@empresa.com",
+  "admin@empresa.com"
+];
+
+Regras sugeridas do Firestore:
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /paineis/{painelId} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email in [
+          "murilo.costajesus@gmail.com",
+          "ext_mudacost@mercadolivre.com"
+        ];
+    }
+
+    match /usuarios/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
+    }
+  }
+}
+
+Como funciona:
+
+- Sem Firebase ligado, o painel continua salvando no próprio navegador.
+- Com Firebase ligado, todos os computadores atualizam ao vivo mesmo sem login.
+- Administrador: edita dados, base, justificativas, metas e limpeza.
+- Leitor: visualiza o painel e PDFs, sem editar.
