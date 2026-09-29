@@ -13,6 +13,7 @@ DECLARE facility_filter STRING DEFAULT 'SSP15';
 DECLARE cycle_filter STRING DEFAULT 'AM1';
 DECLARE operation_filter DATE DEFAULT CURRENT_DATE('America/Sao_Paulo');
 
+CREATE TEMP TABLE live_result AS
 WITH cycle_summary AS (
   SELECT
     CYCLE_SUMMARY_ID,
@@ -232,4 +233,25 @@ LEFT JOIN rotas r
 LEFT JOIN eventos e
   ON e.process_id = p.process_id
 
-ORDER BY p.wave_number, route_name, p.process_id;
+;
+
+SELECT
+  live_result.*,
+  CASE
+    WHEN LOWER(latest_event_name) IN ('killed','canceled','skipped')
+      THEN 'terminal_exception'
+    WHEN LOWER(latest_event_name) = 'gate-out'
+      AND UPPER(latest_status) = 'PROCESS_FINISHED'
+      THEN 'dispatched'
+    WHEN UPPER(latest_purpose_status) = 'DOING_AUDIT'
+      THEN 'customs_in_progress'
+    WHEN UPPER(latest_purpose_status) = 'WAITING_FOR_AUDIT'
+      THEN 'waiting_customs'
+    WHEN UPPER(latest_purpose_status) = 'LOADING_PACKAGES_STARTED'
+      THEN 'loading_packages'
+    WHEN UPPER(latest_status) = 'UN-LOAD_STARTED'
+      THEN 'at_dock'
+    ELSE 'unknown'
+  END AS lifecycle_calculado
+FROM live_result
+ORDER BY wave_number, route_name, process_id;
