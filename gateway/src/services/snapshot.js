@@ -119,6 +119,7 @@ async function buildSnapshot(options) {
     && (!ymsEnabled || yms.length === 0);
 
   const payload = {
+    gatewayMode: config.mode,
     snapshotComplete: true,
     emptyConfirmed: scenario === "empty-confirmed" && allActiveSourcesEmpty,
     sources: {
@@ -159,6 +160,7 @@ async function buildDispatchSnapshot({
   }));
   const operacional = rows.map(sanitizeDispatch);
   return {
+    gatewayMode: config.mode,
     snapshotComplete: true,
     emptyConfirmed: scenario === "empty-confirmed" && operacional.length === 0,
     sources: { dispatch: "ok" },
@@ -176,6 +178,7 @@ async function buildCustomsSnapshot({ config, scenario, timezone, dependencies =
   }));
   const aduana = rows.map(sanitizeCustoms);
   return {
+    gatewayMode: config.mode,
     snapshotComplete: true,
     emptyConfirmed: scenario === "empty-confirmed" && aduana.length === 0,
     sources: { aduana: "ok" },
@@ -211,6 +214,7 @@ async function buildYmsSnapshot({
   const yms = rows.map(sanitizeYms);
 
   return {
+    gatewayMode: config.mode,
     snapshotComplete: true,
     emptyConfirmed: scenario === "empty-confirmed" && yms.length === 0,
     sources: { yms: "ok" },
