@@ -31,7 +31,7 @@
     timezone: "America/Sao_Paulo",
     waves: ["1", "2", "3", "4", "5"],
 
-    timeoutMs: 12000,
+    timeoutMs: 35000,
     intervalMs: 30000,
     enabled: true,
     standalone: true,
