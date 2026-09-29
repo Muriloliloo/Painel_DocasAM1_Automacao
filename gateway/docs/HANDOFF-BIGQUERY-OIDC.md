@@ -102,6 +102,7 @@ Depois da aprovacao:
 ```text
 GOOGLE_CLOUD_PROJECT=meli-bi-data
 BIGQUERY_LOCATION=US
+BIGQUERY_MAXIMUM_BYTES_BILLED=10737418240
 GATEWAY_MODE=real
 AUTH_MODE=unconfigured
 YMS_MODE=provider
@@ -136,6 +137,10 @@ Criterio de aceite:
 - `sources.yms` = `ok`;
 - nenhum segredo presente no Git ou frontend;
 - nenhuma permissao de escrita concedida.
+
+## Guardrail de custo
+
+O executor aplica `BIGQUERY_MAXIMUM_BYTES_BILLED=10737418240` (10 GiB) por job como protecao inicial e executa com `useQueryCache=false` para que a atualizacao operacional nao dependa de cache oculto do BigQuery. Ajustar o limite somente depois de medir os perfis `rich` e `lean`.
 
 ## Perfil SQL
 
