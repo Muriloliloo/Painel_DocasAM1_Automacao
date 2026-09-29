@@ -5,7 +5,9 @@ const { GatewayError } = require("../errors");
 const TERMINAL_EVENTS = new Set(["killed", "canceled", "skipped"]);
 
 function asText(value) {
-  return value === null || value === undefined ? "" : String(value);
+  if (value === null || value === undefined) return "";
+  if (typeof value === "object" && "value" in value) return String(value.value ?? "");
+  return String(value);
 }
 
 function asBoolean(value) {
