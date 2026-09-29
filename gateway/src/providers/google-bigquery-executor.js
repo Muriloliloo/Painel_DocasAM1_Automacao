@@ -33,11 +33,28 @@ function parameterTypes(params = {}) {
 function createGoogleBigQueryExecutor({
   BigQueryClass,
   projectId = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCLOUD_PROJECT || "",
-  location = process.env.BIGQUERY_LOCATION || ""
+  location = process.env.BIGQUERY_LOCATION || "",
+  authClient,
+  authClientFactory
 } = {}) {
   const Client = BigQueryClass || loadBigQueryClass();
-  const clientOptions = projectId ? { projectId } : {};
-  const bigquery = new Client(clientOptions);
+  let bigqueryPromise;
+
+  async function getClient() {
+    if (!bigqueryPromise) {
+      bigqueryPromise = (async () => {
+        const resolvedAuthClient = authClient
+          || (typeof authClientFactory === "function" ? await authClientFactory() : null);
+
+        const clientOptions = {};
+        if (projectId) clientOptions.projectId = projectId;
+        if (resolvedAuthClient) clientOptions.authClient = resolvedAuthClient;
+
+        return new Client(clientOptions);
+      })();
+    }
+    return bigqueryPromise;
+  }
 
   return async function executeBigQuery({ sql, params, signal }) {
     if (signal?.aborted) {
@@ -59,6 +76,7 @@ function createGoogleBigQueryExecutor({
 
     let rows;
     try {
+      const bigquery = await getClient();
       [rows] = await bigquery.query(options);
     } catch {
       throw new GatewayError(
