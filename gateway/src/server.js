@@ -312,23 +312,25 @@ function createGatewayHandler(config = createConfig(), dependencies = {}) {
         sendJson(response, 200, {
           status: "ok",
           gatewayMode: config.mode,
-          authMode: config.authMode,
-          snapshotSourceMode: config.snapshotSourceMode
+          authMode: config.authMode
         }, config);
         return;
       }
       if (pathname === "/ready") {
         rejectUnknownParameters(url.searchParams, new Set());
-        let ready = config.mode === "mock";
+        let ready;
 
-        if (!ready && config.snapshotSourceMode === "yms-primary") {
+        if (config.snapshotSourceMode === "yms-primary") {
           ready = isYmsProviderReady(config, sourceDependencies.ymsProvider);
-        } else if (!ready) {
-          try {
-            await getAuthContext(sourceDependencies.authProvider);
-            ready = true;
-          } catch {
-            ready = false;
+        } else {
+          ready = config.mode === "mock";
+          if (!ready) {
+            try {
+              await getAuthContext(sourceDependencies.authProvider);
+              ready = true;
+            } catch {
+              ready = false;
+            }
           }
 
           if (ready && !isYmsProviderReady(config, sourceDependencies.ymsProvider)) {
@@ -339,8 +341,7 @@ function createGatewayHandler(config = createConfig(), dependencies = {}) {
         sendJson(response, ready ? 200 : 503, {
           ready,
           gatewayMode: config.mode,
-          authMode: config.authMode,
-          snapshotSourceMode: config.snapshotSourceMode
+          authMode: config.authMode
         }, config);
         return;
       }
