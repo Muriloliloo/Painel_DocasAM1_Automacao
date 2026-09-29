@@ -1489,13 +1489,15 @@ test("A16 groupId fica restrito a allowlist do gateway", async () => {
   );
 });
 
-test("A17 configuracao publica da automacao inicia desativada e sem segredo", () => {
+test("A17 configuracao publica usa homologacao segura e sem segredo", () => {
   const root = path.resolve(__dirname, "../..");
   const configSource = fs.readFileSync(path.join(root, "automation-config.js"), "utf8");
   const indexSource = fs.readFileSync(path.join(root, "index.html"), "utf8");
 
   assert.equal(indexSource.includes('<script src="./automation-config.js"></script>'), true);
-  assert.equal(configSource.includes('const gatewayBaseUrl = "";'), true);
+  assert.equal(configSource.includes("github.io/Painel_DocasAM1_Automacao/mock-gateway"), true);
+  assert.equal(configSource.includes('snapshotPath: "snapshot.json"'), true);
+  assert.equal(configSource.includes("homologation: true"), true);
   assert.equal(configSource.includes("ymsEnabled: false"), true);
   assert.equal(configSource.includes("ymsPreview: false"), true);
   assert.equal(configSource.includes("enabled: true"), true);
