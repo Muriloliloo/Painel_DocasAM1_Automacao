@@ -13,7 +13,6 @@ function assertProductionConfiguration(config) {
     [config.allowedUpstreamHosts.size > 0, "A allowlist de hosts upstream esta vazia."],
     [config.allowedFacilityIds.size > 0, "A allowlist de facilities esta vazia."],
     [config.allowedSiteIds.size > 0, "A allowlist de sites esta vazia."],
-    [config.allowedGroupIds.size > 0, "A allowlist de groupIds esta vazia."],
     [config.allowedCycles.size > 0, "A allowlist de ciclos esta vazia."],
     [config.allowedWaves.size > 0, "A allowlist de ondas esta vazia."]
   ];
