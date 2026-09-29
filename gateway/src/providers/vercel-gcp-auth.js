@@ -74,7 +74,7 @@ async function createVercelGcpAuthClient({
     service_account_impersonation_url:
       `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${config.GCP_SERVICE_ACCOUNT_EMAIL}:generateAccessToken`,
     subject_token_supplier: {
-      getSubjectToken: () => getVercelOidcToken({ audience })
+      getSubjectToken: () => getVercelOidcToken()
     }
   });
 
