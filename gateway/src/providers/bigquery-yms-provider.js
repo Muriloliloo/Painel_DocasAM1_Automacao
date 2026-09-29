@@ -5,6 +5,7 @@ const path = require("node:path");
 const { GatewayError } = require("../errors");
 
 const RUNTIME_SQL_PATH = path.resolve(__dirname, "../../sql/yms-route-lifecycle-runtime.sql");
+const PRIMARY_RUNTIME_SQL_PATH = path.resolve(__dirname, "../../sql/yms-primary-runtime.sql");
 const OPERATION_DATE_CACHE_MS = 5 * 60 * 1000;
 const OPERATION_DATE_SQL = `
 SELECT MAX(DATE(CYCLE_SCHEDULED_TO)) AS operation_date
@@ -19,6 +20,10 @@ WHERE LOGISTIC_CENTER_ID = @facility_id
 
 function loadRuntimeSql() {
   return fs.readFileSync(RUNTIME_SQL_PATH, "utf8");
+}
+
+function loadPrimaryRuntimeSql() {
+  return fs.readFileSync(PRIMARY_RUNTIME_SQL_PATH, "utf8");
 }
 
 function validateOperationDate(value) {
@@ -226,9 +231,11 @@ function createBigQueryYmsProvider({
 
 module.exports = {
   RUNTIME_SQL_PATH,
+  PRIMARY_RUNTIME_SQL_PATH,
   OPERATION_DATE_SQL,
   OPERATION_DATE_CACHE_MS,
   loadRuntimeSql,
+  loadPrimaryRuntimeSql,
   validateOperationDate,
   validateWaveNumbers,
   currentDateInTimeZone,
