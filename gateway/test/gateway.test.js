@@ -1508,6 +1508,31 @@ test("A17 configuracao publica usa homologacao segura e sem segredo", () => {
   assert.equal(/password\s*:/i.test(configSource), false);
 });
 
+test("A18 Vercel production mock usa somente defaults seguros de homologacao", () => {
+  const config = createConfig({
+    NODE_ENV: "production",
+    VERCEL: "1",
+    GATEWAY_MODE: "mock"
+  });
+
+  assert.equal(config.mode, "mock");
+  assert.equal(config.authMode, "unconfigured");
+  assert.equal(config.ymsMode, "disabled");
+  assert.deepEqual([...config.allowedOrigins], ["https://muriloliloo.github.io"]);
+  assert.deepEqual([...config.allowedGroupIds], ["TESTE"]);
+});
+
+test("A19 modo real na Vercel continua exigindo configuracao corporativa explicita", () => {
+  assert.throws(
+    () => createConfig({
+      NODE_ENV: "production",
+      VERCEL: "1",
+      GATEWAY_MODE: "real"
+    }),
+    /PANEL_ALLOWED_ORIGIN/
+  );
+});
+
 test("G18 sequencia operacional mock evolui a mesma rota pelo polling", async () => {
   await withGateway(testConfig({
     mockScenario: "operational-sequence",
