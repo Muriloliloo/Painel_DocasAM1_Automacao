@@ -13374,7 +13374,18 @@ async function fetchAutomaticJson(url, config, requestContext) {
     if (!response.ok) {
       throw new Error(`Endpoint automatico respondeu HTTP ${response.status}.`);
     }
-    return await response.json();
+
+    const payload = await response.json();
+    const gatewayMode = response.headers.get("X-Painel-Gateway-Mode") || "";
+    if (gatewayMode && payload && typeof payload === "object" && !Array.isArray(payload)) {
+      Object.defineProperty(payload, "__gatewayMode", {
+        value: gatewayMode,
+        enumerable: false,
+        configurable: false,
+        writable: false
+      });
+    }
+    return payload;
   } catch (error) {
     if (error?.name === "AbortError") {
       throw new Error(`Tempo limite de ${config.timeoutMs} ms excedido na automacao.`);
@@ -13415,11 +13426,12 @@ function automaticSnapshotMetadata(payload = {}) {
   );
 
   const modeContainer = containers.find(value =>
-    Object.prototype.hasOwnProperty.call(value, "gatewayMode")
+    Object.prototype.hasOwnProperty.call(value, "__gatewayMode")
+      || Object.prototype.hasOwnProperty.call(value, "gatewayMode")
   );
 
   return {
-    gatewayMode: normalize(modeContainer?.gatewayMode),
+    gatewayMode: normalize(modeContainer?.__gatewayMode || modeContainer?.gatewayMode),
     snapshotComplete: booleanFlag("snapshotComplete"),
     emptyConfirmed: booleanFlag("emptyConfirmed"),
     sources: sourceContainer
