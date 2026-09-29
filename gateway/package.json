@@ -23,6 +23,8 @@
     "smoke:yms:primary": "node scripts/smoke-yms-primary.js"
   },
   "dependencies": {
-    "@google-cloud/bigquery": "9.1.0"
+    "@google-cloud/bigquery": "9.1.0",
+    "@vercel/oidc": "3.8.9",
+    "google-auth-library": "11.1.0"
   }
 }
