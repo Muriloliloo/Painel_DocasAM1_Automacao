@@ -247,6 +247,11 @@ function createConfig(env = process.env, overrides = {}) {
       1000,
       "UPSTREAM_TIMEOUT_MS"
     ),
+    ymsQueryCacheMs: positiveInteger(
+      overrides.ymsQueryCacheMs ?? env.YMS_QUERY_CACHE_MS,
+      45000,
+      "YMS_QUERY_CACHE_MS"
+    ),
     maxResponseBytes: positiveInteger(
       overrides.maxResponseBytes ?? env.MAX_RESPONSE_BYTES,
       262144,
