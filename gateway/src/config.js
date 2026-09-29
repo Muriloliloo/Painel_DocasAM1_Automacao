@@ -252,6 +252,11 @@ function createConfig(env = process.env, overrides = {}) {
       45000,
       "YMS_QUERY_CACHE_MS"
     ),
+    ymsTimeoutMs: positiveInteger(
+      overrides.ymsTimeoutMs ?? env.YMS_TIMEOUT_MS,
+      30000,
+      "YMS_TIMEOUT_MS"
+    ),
     maxResponseBytes: positiveInteger(
       overrides.maxResponseBytes ?? env.MAX_RESPONSE_BYTES,
       262144,
