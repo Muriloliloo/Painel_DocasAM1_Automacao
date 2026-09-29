@@ -6,6 +6,7 @@ const { createConfig } = require("./config");
 const { createAuthProvider, getAuthContext } = require("./auth");
 const { createYmsProvider, isYmsProviderReady } = require("./providers/yms-provider");
 const { GatewayError } = require("./errors");
+const { cloudActivationStatus } = require("./cloud-activation-status");
 const { createUpstreamClient } = require("./http/upstream-client");
 const { createSafeLogger } = require("./logging");
 const {
@@ -309,10 +310,14 @@ function createGatewayHandler(config = createConfig(), dependencies = {}) {
 
       if (pathname === "/health") {
         rejectUnknownParameters(url.searchParams, new Set());
+        const activation = cloudActivationStatus(process.env);
         sendJson(response, 200, {
           status: "ok",
           gatewayMode: config.mode,
-          authMode: config.authMode
+          authMode: config.authMode,
+          ymsMode: config.ymsMode,
+          sourceMode: config.snapshotSourceMode,
+          bigQueryIdentityConfigured: activation.oidcConfigured
         }, config);
         return;
       }
@@ -338,10 +343,14 @@ function createGatewayHandler(config = createConfig(), dependencies = {}) {
           }
         }
 
+        const activation = cloudActivationStatus(process.env);
         sendJson(response, ready ? 200 : 503, {
           ready,
           gatewayMode: config.mode,
-          authMode: config.authMode
+          authMode: config.authMode,
+          ymsMode: config.ymsMode,
+          sourceMode: config.snapshotSourceMode,
+          bigQueryIdentityConfigured: activation.oidcConfigured
         }, config);
         return;
       }
