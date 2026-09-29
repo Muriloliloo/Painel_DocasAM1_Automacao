@@ -1,0 +1,27 @@
+{
+  "name": "painel-docas-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Gateway intermediario seguro para o Painel_DocasAM1",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/start.js",
+    "test": "node --test",
+    "verify": "node scripts/verify.js",
+    "smoke:mock": "node scripts/smoke-mock.js",
+    "preflight:corporate": "node scripts/preflight-corporate.js",
+    "preview:home": "node scripts/home-preview.js",
+    "preview:flow": "node scripts/home-preview.js --flow",
+    "smoke:flow": "node scripts/smoke-flow.js",
+    "preview:recovery": "node scripts/home-preview.js --recovery",
+    "smoke:recovery": "node scripts/smoke-recovery.js",
+    "preflight:yms": "node scripts/preflight-yms.js",
+    "smoke:yms:provider": "node scripts/smoke-yms-provider.js"
+  },
+  "dependencies": {
+    "@google-cloud/bigquery": "9.1.0"
+  }
+}
