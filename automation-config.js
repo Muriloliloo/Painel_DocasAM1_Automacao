@@ -1,6 +1,13 @@
 "use strict";
 
 (() => {
+  // Este repositorio e dedicado exclusivamente a automacao.
+  // Firebase nao e fonte operacional neste projeto.
+  // Enquanto o gateway real nao estiver disponivel, o painel usa apenas
+  // cache/localStorage e editor manual como contingencia local.
+  window.PAINEL_RUNTIME_MODE = "automation";
+  window.PAINEL_AUTOMATION_STANDALONE = true;
+
   // Configuracao publica da automacao.
   // NUNCA colocar token, cookie, senha, Authorization, CSRF ou qualquer segredo aqui.
   //
@@ -32,6 +39,7 @@
 
     timeoutMs: 12000,
     intervalMs: 30000,
-    enabled: true
+    enabled: true,
+    standalone: true
   });
 })();
