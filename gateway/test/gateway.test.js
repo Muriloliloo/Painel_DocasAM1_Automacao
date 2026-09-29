@@ -1495,8 +1495,8 @@ test("A17 configuracao publica usa homologacao segura e sem segredo", () => {
   const indexSource = fs.readFileSync(path.join(root, "index.html"), "utf8");
 
   assert.equal(indexSource.includes('<script src="./automation-config.js"></script>'), true);
-  assert.equal(configSource.includes("github.io/Painel_DocasAM1_Automacao/mock-gateway"), true);
-  assert.equal(configSource.includes('snapshotPath: "snapshot.json"'), true);
+  assert.equal(configSource.includes("https://painel-docas-am1-gateway.vercel.app"), true);
+  assert.equal(configSource.includes('snapshotPath: "snapshot"'), true);
   assert.equal(configSource.includes("homologation: true"), true);
   assert.equal(configSource.includes("ymsEnabled: false"), true);
   assert.equal(configSource.includes("ymsPreview: false"), true);
