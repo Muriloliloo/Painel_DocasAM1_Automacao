@@ -26,7 +26,7 @@
 
     facilityId: "SSP15",
     siteId: "MLB",
-    groupId: "TESTE",
+    groupId: "",
     cycle: "AM1",
     timezone: "America/Sao_Paulo",
     waves: ["1", "2", "3", "4", "5"],
