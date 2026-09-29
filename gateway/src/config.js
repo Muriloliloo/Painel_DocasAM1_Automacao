@@ -5,6 +5,7 @@ const { GatewayError } = require("./errors");
 const AUTH_MODES = Object.freeze(["unconfigured", "corporate"]);
 const YMS_MODES = Object.freeze(["disabled", "mock", "provider"]);
 const SNAPSHOT_SOURCE_MODES = Object.freeze(["dispatch-customs", "yms-primary"]);
+const YMS_SQL_PROFILES = Object.freeze(["rich", "lean"]);
 const UPSTREAM_HOST_ALLOWLIST = Object.freeze(["envios.adminml.com"]);
 const DEFAULT_DISPATCH_BASE_URL = "https://envios.adminml.com";
 const DEFAULT_CUSTOMS_BASE_URL = "https://envios.adminml.com";
@@ -157,6 +158,17 @@ function createConfig(env = process.env, overrides = {}) {
     throw new GatewayError(500, "INVALID_CONFIGURATION", "YMS_MODE deve ser disabled, mock ou provider.");
   }
 
+  const ymsSqlProfile = String(
+    overrides.ymsSqlProfile ?? env.YMS_SQL_PROFILE ?? "rich"
+  ).trim().toLowerCase();
+  if (!YMS_SQL_PROFILES.includes(ymsSqlProfile)) {
+    throw new GatewayError(
+      500,
+      "INVALID_CONFIGURATION",
+      "YMS_SQL_PROFILE deve ser rich ou lean."
+    );
+  }
+
   const snapshotSourceMode = String(
     overrides.snapshotSourceMode ?? env.SNAPSHOT_SOURCE_MODE ?? "dispatch-customs"
   ).trim().toLowerCase();
@@ -187,6 +199,7 @@ function createConfig(env = process.env, overrides = {}) {
     authMode,
     mockScenario,
     ymsMode,
+    ymsSqlProfile,
     snapshotSourceMode,
     allowedUpstreamHosts: new Set(UPSTREAM_HOST_ALLOWLIST),
     dispatchBaseUrl: validatedUpstreamBaseUrl(
@@ -275,6 +288,7 @@ module.exports = {
   AUTH_MODES,
   YMS_MODES,
   SNAPSHOT_SOURCE_MODES,
+  YMS_SQL_PROFILES,
   UPSTREAM_HOST_ALLOWLIST,
   createConfig,
   validatedUpstreamBaseUrl,
