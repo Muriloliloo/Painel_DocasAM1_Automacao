@@ -4,6 +4,7 @@ const { GatewayError } = require("./errors");
 
 const AUTH_MODES = Object.freeze(["unconfigured", "corporate"]);
 const YMS_MODES = Object.freeze(["disabled", "mock", "provider"]);
+const SNAPSHOT_SOURCE_MODES = Object.freeze(["dispatch-customs", "yms-primary"]);
 const UPSTREAM_HOST_ALLOWLIST = Object.freeze(["envios.adminml.com"]);
 const DEFAULT_DISPATCH_BASE_URL = "https://envios.adminml.com";
 const DEFAULT_CUSTOMS_BASE_URL = "https://envios.adminml.com";
@@ -155,6 +156,24 @@ function createConfig(env = process.env, overrides = {}) {
   if (!YMS_MODES.includes(ymsMode)) {
     throw new GatewayError(500, "INVALID_CONFIGURATION", "YMS_MODE deve ser disabled, mock ou provider.");
   }
+
+  const snapshotSourceMode = String(
+    overrides.snapshotSourceMode ?? env.SNAPSHOT_SOURCE_MODE ?? "dispatch-customs"
+  ).trim().toLowerCase();
+  if (!SNAPSHOT_SOURCE_MODES.includes(snapshotSourceMode)) {
+    throw new GatewayError(
+      500,
+      "INVALID_CONFIGURATION",
+      "SNAPSHOT_SOURCE_MODE deve ser dispatch-customs ou yms-primary."
+    );
+  }
+  if (snapshotSourceMode === "yms-primary" && ymsMode === "disabled") {
+    throw new GatewayError(
+      500,
+      "INVALID_CONFIGURATION",
+      "SNAPSHOT_SOURCE_MODE=yms-primary exige YMS_MODE=mock ou provider."
+    );
+  }
   const configuredPort = Number(overrides.port ?? env.PORT ?? 8787);
   if (!Number.isSafeInteger(configuredPort) || configuredPort < 0 || configuredPort > 65535) {
     throw new GatewayError(500, "INVALID_CONFIGURATION", "PORT deve ser uma porta valida.");
@@ -168,6 +187,7 @@ function createConfig(env = process.env, overrides = {}) {
     authMode,
     mockScenario,
     ymsMode,
+    snapshotSourceMode,
     allowedUpstreamHosts: new Set(UPSTREAM_HOST_ALLOWLIST),
     dispatchBaseUrl: validatedUpstreamBaseUrl(
       "DISPATCH_BASE_URL",
@@ -244,6 +264,7 @@ function createConfig(env = process.env, overrides = {}) {
 module.exports = {
   AUTH_MODES,
   YMS_MODES,
+  SNAPSHOT_SOURCE_MODES,
   UPSTREAM_HOST_ALLOWLIST,
   createConfig,
   validatedUpstreamBaseUrl,
