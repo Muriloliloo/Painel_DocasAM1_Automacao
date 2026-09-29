@@ -66,6 +66,10 @@ async function createVercelGcpAuthClient({
   }
 
   const audience = oidcAudience(config);
+  const tokenAudience = audience.startsWith("//")
+    ? `https:${audience}`
+    : audience;
+
   const authClient = new IdentityPoolClient({
     type: "external_account",
     audience,
@@ -75,7 +79,7 @@ async function createVercelGcpAuthClient({
       `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${config.GCP_SERVICE_ACCOUNT_EMAIL}:generateAccessToken`,
     scopes: ["https://www.googleapis.com/auth/cloud-platform"],
     subject_token_supplier: {
-      getSubjectToken: () => getVercelOidcToken()
+      getSubjectToken: () => getVercelOidcToken({ audience: tokenAudience })
     }
   });
 
