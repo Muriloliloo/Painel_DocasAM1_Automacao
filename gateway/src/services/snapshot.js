@@ -161,7 +161,6 @@ async function buildSnapshot(options) {
   const payload = {
     snapshotComplete: true,
     emptyConfirmed: scenario === "empty-confirmed" && allActiveSourcesEmpty,
-    sourceMode: "dispatch-customs",
     sources: {
       dispatch: "ok",
       aduana: "ok"
