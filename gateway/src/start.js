@@ -6,10 +6,15 @@ const { createRuntimeGateway } = require("./runtime-gateway");
 const {
   createGoogleBigQueryExecutor
 } = require("./providers/google-bigquery-executor");
+const {
+  createVercelGcpAuthClient
+} = require("./providers/vercel-gcp-auth");
 
 function createYmsQueryExecutor(config) {
   if (config.ymsMode !== "provider") return undefined;
-  return createGoogleBigQueryExecutor();
+  return createGoogleBigQueryExecutor({
+    authClientFactory: () => createVercelGcpAuthClient()
+  });
 }
 
 function start() {
