@@ -1,0 +1,5 @@
+# Backups e arquivos temporarios do desenvolvimento
+index.before-*.html
+index-bloco*-final.html
+index(*).html
+tatus
