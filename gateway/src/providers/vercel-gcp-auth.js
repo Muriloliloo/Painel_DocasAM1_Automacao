@@ -11,10 +11,13 @@ const REQUIRED_ENV = Object.freeze([
 
 function oidcConfiguration(env = process.env) {
   const values = Object.fromEntries(REQUIRED_ENV.map(key => [key, String(env[key] || "").trim()]));
-  const configured = REQUIRED_ENV.every(key => Boolean(values[key]));
+  const presentCount = REQUIRED_ENV.filter(key => Boolean(values[key])).length;
+  const configured = presentCount === REQUIRED_ENV.length;
+  const partial = presentCount > 0 && !configured;
 
   return {
     configured,
+    partial,
     ...values
   };
 }
@@ -29,6 +32,13 @@ async function createVercelGcpAuthClient({
   googleAuthLoader
 } = {}) {
   const config = oidcConfiguration(env);
+  if (config.partial) {
+    throw new GatewayError(
+      500,
+      "GCP_OIDC_CONFIGURATION_INCOMPLETE",
+      "Configuracao OIDC GCP incompleta."
+    );
+  }
   if (!config.configured) return null;
 
   let getVercelOidcToken;
