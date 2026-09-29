@@ -4,7 +4,23 @@ Este documento descreve o acesso minimo necessario para o runtime do gateway con
 
 ## Identidade
 
+A execucao manual validada usa:
+
+- projeto BigQuery: `meli-bi-data`
+- location: `US`
+
+A automacao nao deve reutilizar a conta humana que executou a consulta manual.
+
 Usar uma identidade de runtime aprovada, como service account vinculada ao servico ou workload identity / ADC.
+
+Para Vercel, o caminho preparado no gateway e OIDC federado. A TI/Cloud precisa provisionar e informar apenas estes identificadores nao secretos:
+
+- `GCP_PROJECT_NUMBER`
+- `GCP_SERVICE_ACCOUNT_EMAIL`
+- `GCP_WORKLOAD_IDENTITY_POOL_ID`
+- `GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID`
+
+O provider de Workload Identity deve aceitar o token OIDC emitido pela Vercel e restringir os principals/claims ao projeto, time e ambiente aprovados.
 
 Nao colocar chave JSON, token, cookie ou credencial no Git, no frontend, no arquivo `.env` ou na imagem Docker.
 
@@ -18,7 +34,7 @@ Conceder:
 
 Objetivo: permitir a criacao do job de consulta BigQuery.
 
-O projeto onde o job e executado pode ser diferente do projeto que hospeda os dados. Quando necessario, configurar esse identificador em `GOOGLE_CLOUD_PROJECT`.
+O projeto confirmado para os jobs atuais e `meli-bi-data`, configurado em `GOOGLE_CLOUD_PROJECT`. A location confirmada e `US`, configurada em `BIGQUERY_LOCATION`.
 
 ### Dados YMS
 
