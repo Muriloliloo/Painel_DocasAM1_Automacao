@@ -7,5 +7,6 @@
     "aduana": "ok"
   },
   "operacional": [],
-  "aduana": []
+  "aduana": [],
+  "gatewayMode": "mock"
 }
