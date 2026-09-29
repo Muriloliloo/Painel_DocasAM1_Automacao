@@ -1516,6 +1516,7 @@ test("A18 Vercel production mock usa somente defaults seguros de homologacao", (
   });
 
   assert.equal(config.mode, "mock");
+  assert.equal(config.mockScenario, "empty-confirmed");
   assert.equal(config.authMode, "unconfigured");
   assert.equal(config.ymsMode, "disabled");
   assert.deepEqual([...config.allowedOrigins], ["https://muriloliloo.github.io"]);
