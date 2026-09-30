@@ -91,7 +91,7 @@ if ! gcloud iam workload-identity-pools providers describe "$PROVIDER_ID" \
     --location=global \
     --workload-identity-pool="$POOL_ID" \
     --display-name="Vercel production Painel Docas" \
-    --issuer-uri="https://oidc.vercel.com" \
+    --issuer-uri="https://oidc.vercel.com/${VERCEL_OWNER}" \
     --attribute-mapping="google.subject=assertion.sub" \
     --attribute-condition="assertion.sub == '${VERCEL_SUBJECT}'"
 fi
