@@ -25,7 +25,7 @@ Vercel OIDC
 - Vercel team slug: `muriloliloos-projetos`
 - Vercel gateway project slug: `painel-docas-am1-gateway`
 - Vercel production hostname: `painel-docas-am1-gateway.vercel.app`
-- OIDC issuer da Vercel: `https://oidc.vercel.com`
+- OIDC issuer da Vercel: `https://oidc.vercel.com/muriloliloos-projetos`
 
 ## Identidade solicitada
 
@@ -69,7 +69,7 @@ Restringir o provider/impersonation ao deployment aprovado. A condicao deve vali
 - `project_id`: somente o projeto `painel-docas-am1-gateway`
 - `owner_id`: somente o time/owner aprovado
 - `environment`: somente `production`
-- issuer: Vercel OIDC
+- issuer: Vercel OIDC Team (`https://oidc.vercel.com/muriloliloos-projetos`)
 - audience: valor emitido/aceito pelo provider configurado
 
 Nao autorizar wildcard amplo para todos os projetos/deployments da conta.
