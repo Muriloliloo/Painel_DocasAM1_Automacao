@@ -10555,8 +10555,187 @@ body.editor-open .global-theme-toggle {
     flex-basis: 96px;
   }
 }
+  /* Layout visual de docas — sem alterações de cálculo, dados ou integração. */
+.app.docas-mode {
+  --docas-grid-offset: 174px;
+  --docas-side-gap: 12px;
+}
+.docas-mode .dock-grid.dock-grid--reference {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(104px, 9vw, 160px);
+  grid-template-rows: minmax(0, 1fr);
+  align-items: stretch;
+  gap: clamp(7px, .65vw, 12px);
+  padding: 0;
+  overflow: auto;
+  background: #d8eaf6;
+  border: 1px solid #c8dce9;
+  border-radius: 7px;
+  scrollbar-width: thin;
+}
+.docas-mode .dock-reference-main {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, .7vh, 10px);
+  min-width: 0;
+  min-height: 100%;
+}
+.docas-mode .dock-reference-top {
+  display: grid;
+  grid-template-columns: clamp(56px, 5vw, 82px) minmax(0, 1fr);
+  gap: clamp(7px, .65vw, 12px);
+  min-height: 0;
+}
+.docas-mode .dock-reference-rail {
+  display: grid;
+  grid-template-rows: repeat(8, minmax(28px, 1fr));
+  gap: 3px;
+  min-width: 0;
+}
+.docas-mode .dock-reference-zones {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(7px, .8vh, 11px);
+  min-width: 0;
+}
+.docas-mode .dock-reference-zone {
+  min-width: 0;
+  background: #edf6fc;
+  border: 1px solid #c8dfed;
+  border-radius: 6px;
+  padding: clamp(4px, .45vw, 8px);
+  box-shadow: 0 2px 5px rgba(16,65,108,.06);
+}
+.docas-mode .dock-reference-zone-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+  color: #12375c;
+  font: 800 clamp(9px, .6vw, 12px)/1.2 "Segoe UI", Arial, sans-serif;
+  text-transform: uppercase;
+}
+.docas-mode .dock-reference-zone-title small {
+  font: 700 clamp(8px, .5vw, 10px)/1.1 "Segoe UI", Arial, sans-serif;
+  text-transform: none;
+}
+.docas-mode .dock-reference-lane {
+  display: grid;
+  grid-template-columns: repeat(var(--lane-columns), minmax(0, 1fr));
+  gap: clamp(3px, .36vw, 7px);
+  min-height: clamp(31px, 4.1vh, 57px);
+  margin: 3px 0;
+}
+.docas-mode .dock-reference-lane + .dock-reference-lane {
+  margin-top: clamp(8px, 1.1vh, 15px);
+  position: relative;
+}
+.docas-mode .dock-reference-lane + .dock-reference-lane::before {
+  content: "➜";
+  position: absolute;
+  top: calc(-1 * clamp(8px, 1.1vh, 15px));
+  left: 47%;
+  font-size: 10px;
+  line-height: 10px;
+  color: #80a7c3;
+}
+.docas-mode .dock-reference-linehall {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #eaf5fc;
+  border: 1px solid #bfd7e8;
+  padding: 4px;
+  border-radius: 6px;
+  min-width: 0;
+}
+.docas-mode .dock-reference-linehall > strong {
+  display: block;
+  text-align: center;
+  background: #082b4d;
+  color: white;
+  border-radius: 3px;
+  padding: 7px 2px;
+  font: 900 clamp(9px, .55vw, 12px)/1 "Segoe UI", Arial, sans-serif;
+}
+.docas-mode .dock-reference-linehall .slot { flex: 1 1 0; min-height: 36px; }
+.docas-mode .dock-reference-rail .slot { min-height: 27px; }
+.docas-mode .dock-grid--reference .slot {
+  width: 100%;
+  min-width: 0;
+  min-height: 30px;
+  padding: 5px 4px 3px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(9,55,95,.11);
+  border: 1px solid #c1d6e5;
+  border-radius: 5px;
+}
+.docas-mode .dock-grid--reference .slot::before { height: 3px; }
+.docas-mode .dock-grid--reference .route { font-size: clamp(9px, .75vw, 14px); }
+.docas-mode .dock-grid--reference .dock-card-head { height: auto; min-height: 10px; }
+.docas-mode .dock-grid--reference .dock-footer-line { min-height: 0; }
+.docas-mode .dock-grid--reference .dock-person,
+.docas-mode .dock-grid--reference .dock-minutes,
+.docas-mode .dock-grid--reference .dock-status,
+.docas-mode .dock-grid--reference .dock-carrier-bottom,
+.docas-mode .dock-grid--reference .dock-extra-line { font-size: clamp(7px, .48vw, 10px); }
+.docas-mode .dock-grid--reference .dock-free { font-size: clamp(8px, .56vw, 11px); }
+@media (max-width: 1050px) {
+  .docas-mode .dock-grid.dock-grid--reference { grid-template-columns: minmax(780px,1fr) 110px; overflow: auto; }
+  .docas-mode .dock-reference-top { grid-template-columns: 55px minmax(0,1fr); }
+  .docas-mode .dock-reference-lane { min-height: 44px; }
+}
+@media (max-height: 760px) and (min-width: 1051px) {
+  .docas-mode .dock-grid--reference .dock-reference-lane { min-height: 31px; }
+  .docas-mode .dock-grid--reference .dock-reference-zone { padding: 3px 6px; }
+  .docas-mode .dock-grid--reference .dock-reference-zones { gap: 5px; }
+}
+
+/* Correção da publicação: ocupar toda a área de docas sem depender do CSS externo. */
+.app.docas-mode .dock-grid.dock-grid--reference {
+  display: grid !important;
+  width: calc(100% - var(--docas-rail-w) - (var(--docas-side-gap) * 2)) !important;
+  max-width: none !important;
+  grid-template-columns: minmax(0, 1fr) clamp(112px, 11.5vw, 180px) !important;
+  height: calc(100dvh - 176px) !important;
+  min-height: 0 !important;
+  margin: 6px var(--docas-side-gap) 45px calc(var(--docas-rail-w) + var(--docas-side-gap)) !important;
+  gap: 10px !important;
+  overflow: auto !important;
+}
+.app.docas-mode .dock-reference-main,
+.app.docas-mode .dock-reference-top,
+.app.docas-mode .dock-reference-zones,
+.app.docas-mode .dock-reference-zone,
+.app.docas-mode .dock-reference-lane {
+  width: 100%;
+  min-width: 0;
+}
+.app.docas-mode .dock-reference-top {
+  display: grid !important;
+  grid-template-columns: clamp(62px, 8.5%, 120px) minmax(0, 1fr) !important;
+  gap: 12px;
+}
+.app.docas-mode .dock-reference-zones { display: flex !important; flex-direction: column !important; }
+.app.docas-mode .dock-reference-lane {
+  display: grid !important;
+  grid-template-columns: repeat(var(--lane-columns), minmax(0,1fr)) !important;
+  min-height: clamp(43px, 5.1vh, 70px) !important;
+  gap: clamp(3px, .55vw, 9px) !important;
+}
+.app.docas-mode .dock-reference-zone { flex: 0 0 auto; }
+.app.docas-mode .dock-reference-linehall { display: flex !important; flex-direction: column !important; }
+.app.docas-mode .dock-reference-zone-title { min-height: 20px; }
+.app.docas-mode .dock-reference-lane + .dock-reference-lane { margin-top: 16px; }
+.app.docas-mode .dock-reference-lane + .dock-reference-lane::before { top: -15px; }
+@media(max-width: 1050px) {
+  .app.docas-mode .dock-grid.dock-grid--reference {
+    grid-template-columns: minmax(850px, 1fr) 120px !important;
+  }
+}
+
   </style>
-  <link rel="stylesheet" href="./dock-layout-reference.css">
 </head>
 <body>
   <main class="app">
