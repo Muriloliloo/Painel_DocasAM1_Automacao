@@ -2,18 +2,7 @@
 
 Projeto dedicado a evolucao automatizada do painel de docas AM1. O repositorio operacional original permanece separado e nao recebe as alteracoes desta versao.\n\nPainel web para controle de ondas, docas, rotas carregadas, rotas expedidas, justificativas e fechamento operacional.
 
-## Como Publicar no GitHub Pages
 
-1. Crie um repositorio no GitHub.
-2. Envie todos os arquivos desta pasta para o repositorio.
-3. No GitHub, entre em **Settings > Pages**.
-4. Em **Build and deployment**, selecione:
-   - Source: **Deploy from a branch**
-   - Branch: **main**
-   - Folder: **/root**
-5. Clique em **Save**.
-6. O GitHub vai gerar um link parecido com:
-   `https://muriloliloo.github.io/Painel_DocasAM1_Automacao/`
 
 ## Arquivos Principais
 
