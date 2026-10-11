@@ -10556,6 +10556,7 @@ body.editor-open .global-theme-toggle {
   }
 }
   </style>
+  <link rel="stylesheet" href="./dock-layout-reference.css">
 </head>
 <body>
   <main class="app">
@@ -16539,6 +16540,7 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
       syncHybridPdfFilters();
     }
 
+    // Layout de apresentação das docas: os estados continuam vindo de createDockSlot.
     function renderGrid() {
       const grid = document.getElementById("dockGrid");
       if (syncLoadingStarts()) saveData({ localOnly: true, advanceRevision: false });
@@ -16548,47 +16550,70 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
       const statusMap = baseStatusByRoute();
       const baseMap = baseDetailsByRoute();
       const maxDock = Number(data.docas || 92);
-      grid.innerHTML = "";
+      grid.replaceChildren();
+      grid.classList.add("dock-grid--reference");
 
-      dockLayoutBlocks.forEach((block, blockIndex) => {
-        const blockEl = document.createElement("div");
-        blockEl.className = `dock-block block-${blockIndex + 1}`;
+      const slot = dock => {
+        if (dock > maxDock) return document.createElement("span");
+        return createDockSlot(dock, map.get(dock) || [], loaded, shipped, statusMap, baseMap);
+      };
+      const range = (first, last, reverse = false) => {
+        const values = Array.from({ length: last - first + 1 }, (_, index) => first + index);
+        return reverse ? values.reverse() : values;
+      };
+      const lane = docks => {
+        const element = document.createElement("div");
+        element.className = "dock-reference-lane";
+        element.style.setProperty("--lane-columns", String(docks.length));
+        docks.forEach(dock => element.appendChild(slot(dock)));
+        return element;
+      };
+      const zone = (label, lanes, details = "") => {
+        const element = document.createElement("section");
+        element.className = "dock-reference-zone";
+        const title = document.createElement("div");
+        title.className = "dock-reference-zone-title";
+        const heading = document.createElement("strong");
+        heading.textContent = label;
+        title.appendChild(heading);
+        if (details) {
+          const hint = document.createElement("small");
+          hint.textContent = details;
+          title.appendChild(hint);
+        }
+        element.appendChild(title);
+        lanes.forEach(docks => element.appendChild(lane(docks)));
+        return element;
+      };
 
-        const zoneRow = document.createElement("div");
-        zoneRow.className = "dock-zone-labels";
-        zoneRow.style.setProperty("--dock-zone-columns", String(block.length));
-        zoneRow.setAttribute("aria-label", "Setores operacionais das docas");
-        (dockZoneLabels[blockIndex] || []).forEach(zone => {
-          const label = document.createElement("span");
-          label.className = "dock-zone-label";
-          label.style.gridColumn = `${zone.column} / span ${zone.span}`;
-          label.textContent = zone.label;
-          label.title = `${zone.label} — ${zone.range}`;
-          label.setAttribute("aria-label", `${zone.label}, ${zone.range}`);
-          zoneRow.appendChild(label);
-        });
-        blockEl.appendChild(zoneRow);
+      const main = document.createElement("div");
+      main.className = "dock-reference-main";
+      const top = document.createElement("div");
+      top.className = "dock-reference-top";
+      const rail = document.createElement("div");
+      rail.className = "dock-reference-rail";
+      rail.setAttribute("aria-label", "Docas 01 a 08");
+      range(1, 8, true).forEach(dock => rail.appendChild(slot(dock)));
+      top.appendChild(rail);
+      const zones = document.createElement("div");
+      zones.className = "dock-reference-zones";
+      zones.appendChild(zone("DOCAS 09 – 22", [range(9, 15), range(16, 22, true)], "Coordenador / PS: conforme editor"));
+      zones.appendChild(zone("DOCAS 23 – 42", [range(23, 30), range(31, 42, true)], "Coordenador / PS: conforme editor"));
+      zones.appendChild(zone("DOCAS 43 – 71", [range(43, 56), range(57, 71, true)], "Coordenador / PS: conforme editor"));
+      // Estas docas não constam na referência, mas permanecem disponíveis.
+      zones.appendChild(zone("DOCAS 72 – 85", [range(72, 78), range(79, 85, true)]));
+      top.appendChild(zones);
+      main.appendChild(top);
+      grid.appendChild(main);
 
-        block.forEach(column => {
-          const columnEl = document.createElement("div");
-          columnEl.className = "dock-column";
-
-          column.forEach(dock => {
-            if (!dock || dock > maxDock) {
-              const spacer = document.createElement("div");
-              spacer.className = "dock-spacer";
-              spacer.setAttribute("aria-hidden", "true");
-              columnEl.appendChild(spacer);
-              return;
-            }
-            columnEl.appendChild(createDockSlot(dock, map.get(dock) || [], loaded, shipped, statusMap, baseMap));
-          });
-
-          blockEl.appendChild(columnEl);
-        });
-
-        grid.appendChild(blockEl);
-      });
+      const lineHall = document.createElement("aside");
+      lineHall.className = "dock-reference-linehall";
+      lineHall.setAttribute("aria-label", "Line Hall — docas 86 a 92");
+      const heading = document.createElement("strong");
+      heading.textContent = "LINE HALL";
+      lineHall.appendChild(heading);
+      range(86, 92).forEach(dock => lineHall.appendChild(slot(dock)));
+      grid.appendChild(lineHall);
     }
     function renderStats() {
       const rows = rowsForWave(currentWave);
