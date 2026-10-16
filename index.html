@@ -10813,6 +10813,61 @@ body.editor-open .global-theme-toggle {
   .app.docas-mode .dock-reference-linehall { min-height: 450px !important; }
 }
 
+
+/* Same card dimensions in every sector, regardless of lane occupancy. */
+.app.docas-mode .dock-grid.dock-grid--reference {
+  --reference-card-width: clamp(72px, calc((100vw - 180px) / 14 - 4px), 160px);
+  --reference-card-height: clamp(64px, 7.8vh, 100px);
+  grid-template-columns: max-content max-content !important;
+  justify-content: start;
+  align-items: start !important;
+  overflow: auto !important;
+}
+.app.docas-mode .dock-reference-main,
+.app.docas-mode .dock-reference-top,
+.app.docas-mode .dock-reference-zones {
+  height: auto !important;
+  min-height: 0 !important;
+}
+.app.docas-mode .dock-reference-zones {
+  grid-template-rows: none !important;
+  grid-auto-rows: max-content;
+  gap: 6px !important;
+}
+.app.docas-mode .dock-reference-zone {
+  grid-template-rows: 18px repeat(var(--zone-lanes, 2), var(--reference-card-height)) !important;
+  padding: 4px !important;
+  gap: 4px !important;
+}
+.app.docas-mode .dock-reference-lane {
+  grid-template-columns: repeat(13, var(--reference-card-width)) !important;
+  height: var(--reference-card-height) !important;
+  gap: 4px !important;
+}
+.app.docas-mode .dock-reference-lane + .dock-reference-lane::before { display: none; }
+.app.docas-mode .dock-reference-linehall {
+  box-sizing: content-box;
+  width: var(--reference-card-width) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 4px !important;
+  gap: 4px !important;
+  overflow: visible !important;
+}
+.app.docas-mode .dock-reference-linehall > strong {
+  box-sizing: border-box;
+  height: 18px;
+  padding: 3px 0;
+}
+.app.docas-mode .dock-grid--reference .slot,
+.app.docas-mode .dock-reference-linehall .slot {
+  box-sizing: border-box;
+  width: var(--reference-card-width) !important;
+  height: var(--reference-card-height) !important;
+  min-height: var(--reference-card-height) !important;
+  flex: 0 0 var(--reference-card-height) !important;
+}
+
   </style>
 </head>
 <body>
