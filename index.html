@@ -10582,7 +10582,7 @@ body.editor-open .global-theme-toggle {
 }
 .docas-mode .dock-reference-top {
   display: grid;
-  grid-template-columns: clamp(56px, 5vw, 82px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(7px, .65vw, 12px);
   min-height: 0;
 }
@@ -10683,7 +10683,7 @@ body.editor-open .global-theme-toggle {
 .docas-mode .dock-grid--reference .dock-free { font-size: clamp(8px, .56vw, 11px); }
 @media (max-width: 1050px) {
   .docas-mode .dock-grid.dock-grid--reference { grid-template-columns: minmax(780px,1fr) 110px; overflow: auto; }
-  .docas-mode .dock-reference-top { grid-template-columns: 55px minmax(0,1fr); }
+  .docas-mode .dock-reference-top { grid-template-columns: minmax(0,1fr); }
   .docas-mode .dock-reference-lane { min-height: 44px; }
 }
 @media (max-height: 760px) and (min-width: 1051px) {
@@ -10714,7 +10714,7 @@ body.editor-open .global-theme-toggle {
 }
 .app.docas-mode .dock-reference-top {
   display: grid !important;
-  grid-template-columns: clamp(62px, 8.5%, 120px) minmax(0, 1fr) !important;
+  grid-template-columns: minmax(0, 1fr) !important;
   gap: 12px;
 }
 .app.docas-mode .dock-reference-zones { display: flex !important; flex-direction: column !important; }
@@ -10768,7 +10768,7 @@ body.editor-open .global-theme-toggle {
 }
 .app.docas-mode .dock-reference-zone {
   display: grid !important;
-  grid-template-rows: auto repeat(2,minmax(0,1fr)) !important;
+  grid-template-rows: auto repeat(var(--zone-lanes, 2),minmax(0,1fr)) !important;
   min-height: 0 !important;
   padding: clamp(3px,.32vw,7px) !important;
   gap: clamp(4px,.4vh,7px) !important;
@@ -15700,6 +15700,12 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
       return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
     }
 
+    function visibleDockNumbers() {
+      const maxDock = Number(data.docas || 92);
+      return Array.from({ length: 91 }, (_, index) => index + 1)
+        .filter(dock => dock <= maxDock && ((dock >= 9 && dock <= 71) || (dock >= 86 && dock <= 91)));
+    }
+
     function renderSimpleDocksMetrics() {
       const routes = rowsForWave(currentWave);
       const counts = dockSlotCounts(currentWave);
@@ -15708,7 +15714,7 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
       const values = {
         simpleRoutesCount: total,
         simpleWaveLabel: displayWave(currentWave),
-        simpleDocksCount: Number(data.docas || 92),
+        simpleDocksCount: visibleDockNumbers().length,
         simpleLoadedCount: counts.loaded || 0,
         simpleLoadedPercent: percent(counts.loaded || 0),
         simpleCustomsCount: counts.customs || 0,
@@ -15736,7 +15742,7 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
       const maxDock = Number(data.docas || 92);
       const cards = [];
 
-      for (let dock = 1; dock <= maxDock; dock += 1) {
+      for (const dock of visibleDockNumbers()) {
         const rows = map.get(dock) || [];
         const displayRows = rows.map(row => mergeRouteBaseDetails(row, baseMap));
         const primary = displayRows[0];
@@ -15770,7 +15776,7 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
       const gridStyle = getComputedStyle(grid);
       const wrapStyle = getComputedStyle(wrap);
       const gap = Number.parseFloat(gridStyle.columnGap) || 7;
-      const totalDocks = Math.max(1, Number(data.docas || 92));
+      const totalDocks = Math.max(1, grid.children.length);
 
       let minimumCardWidth = 112;
       let minimumColumns = 8;
@@ -16828,6 +16834,7 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
       const zone = (label, lanes, details = "") => {
         const element = document.createElement("section");
         element.className = "dock-reference-zone";
+        element.style.setProperty("--zone-lanes", String(lanes.length));
         const title = document.createElement("div");
         title.className = "dock-reference-zone-title";
         const heading = document.createElement("strong");
@@ -16847,29 +16854,23 @@ payload.baseHistorico = fullHistory.slice(-CLOUD_HISTORY_MAX_ROWS);
       main.className = "dock-reference-main";
       const top = document.createElement("div");
       top.className = "dock-reference-top";
-      const rail = document.createElement("div");
-      rail.className = "dock-reference-rail";
-      rail.setAttribute("aria-label", "Docas 01 a 08");
-      range(1, 8, true).forEach(dock => rail.appendChild(slot(dock)));
-      top.appendChild(rail);
       const zones = document.createElement("div");
       zones.className = "dock-reference-zones";
-      zones.appendChild(zone("DOCAS 09 – 22", [range(9, 15), range(16, 22, true)], "Coordenador / PS: conforme editor"));
-      zones.appendChild(zone("DOCAS 23 – 42", [range(23, 30), range(31, 42, true)], "Coordenador / PS: conforme editor"));
-      zones.appendChild(zone("DOCAS 43 – 71", [range(43, 56), range(57, 71, true)], "Coordenador / PS: conforme editor"));
-      // Estas docas não constam na referência, mas permanecem disponíveis.
-      zones.appendChild(zone("DOCAS 72 – 85", [range(72, 78), range(79, 85, true)]));
+      zones.appendChild(zone("A (09–15) · Lado Heineken", [range(9, 15)]));
+      zones.appendChild(zone("B (16–30) · Central", [range(16, 23), range(24, 30)]));
+      zones.appendChild(zone("C (31–56) · Central", [range(31, 43), range(44, 56)]));
+      zones.appendChild(zone("D (57–71) · Parede", [range(57, 64), range(65, 71)]));
       top.appendChild(zones);
       main.appendChild(top);
       grid.appendChild(main);
 
       const lineHall = document.createElement("aside");
       lineHall.className = "dock-reference-linehall";
-      lineHall.setAttribute("aria-label", "Line Hall — docas 86 a 92");
+      lineHall.setAttribute("aria-label", "Line Hall — docas 86 a 91");
       const heading = document.createElement("strong");
-      heading.textContent = "LINE HALL";
+      heading.textContent = "E (86–91) · LH";
       lineHall.appendChild(heading);
-      range(86, 92).forEach(dock => lineHall.appendChild(slot(dock)));
+      range(86, 91).forEach(dock => lineHall.appendChild(slot(dock)));
       grid.appendChild(lineHall);
     }
     function renderStats() {
